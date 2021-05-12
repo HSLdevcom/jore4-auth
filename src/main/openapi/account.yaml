@@ -1,0 +1,19 @@
+openapi: "3.0.0"
+
+paths:
+  getActiveAccount:
+    get:
+      tags:
+        - account
+      summary: Active user account endpoint
+      description: Returns account information of the currently logged in user
+      operationId: getActiveAccount
+      produces:
+        - application/json
+      responses:
+        200:
+          description: Account of the currently logged in user
+          content:
+            application/json:
+              schema:
+                $ref: './types/account.yaml#/definitions/account'
