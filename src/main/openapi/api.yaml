@@ -1,0 +1,13 @@
+openapi: "3.0.0"
+info:
+  version: 1.0.0
+  title: Jore4 Auth API
+  license:
+    name: EUPL 1.2
+paths:
+  /userInfo:
+    $ref: './userInfo.yaml#/paths/getUserInfo'
+  /login:
+    $ref: './authentication.yaml#/paths/login'
+  /logout:
+    $ref: './authentication.yaml#/paths/logout'
