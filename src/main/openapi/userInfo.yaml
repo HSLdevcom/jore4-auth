@@ -1,0 +1,19 @@
+openapi: "3.0.0"
+
+paths:
+  getUserInfo:
+    get:
+      tags:
+        - userInfo
+      summary: User userInfo endpoint
+      description: Returns user info of the currently logged in user
+      operationId: getUserInfo
+      produces:
+        - application/json
+      responses:
+        200:
+          description: User info of the currently logged in user
+          content:
+            application/json:
+              schema:
+                $ref: './types/userInfo.yaml#/definitions/userInfo'
