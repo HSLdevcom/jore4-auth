@@ -1,0 +1,26 @@
+openapi: "3.0.0"
+
+paths:
+  login:
+    get:
+      tags:
+        - authentication
+      summary: Login endpoint
+      description: Redirects user to OIDC provider
+      operationId: login
+      produces:
+        - application/json
+      responses:
+        302:
+          description: Redirect to OIDC provider
+  logout:
+    get:
+      tags:
+        - authentication
+      summary: Logout endpoint
+      operationId: logout
+      produces:
+        - application/json
+      responses:
+        302:
+          description: Redirect to OIDC provider logout
