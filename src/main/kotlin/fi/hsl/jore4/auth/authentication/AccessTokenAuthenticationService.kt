@@ -1,5 +1,6 @@
 package fi.hsl.jore4.auth.authentication
 
+import com.nimbusds.oauth2.sdk.token.AccessToken
 import org.slf4j.LoggerFactory
 import org.springframework.security.core.Authentication
 import org.springframework.security.core.context.SecurityContextHolder
@@ -11,7 +12,7 @@ import org.springframework.transaction.annotation.Transactional
 open class AccessTokenAuthenticationService(
         private val jwtTokenParser: JwtTokenParser
 ) {
-    open fun loginUsingAccessToken(accessToken: String): Authentication {
+    open fun loginUsingAccessToken(accessToken: AccessToken): Authentication {
         try {
             LOG.debug("Logging in using access token...")
             //val claims = jwtTokenParser.parseAndVerify(accessToken)

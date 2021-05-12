@@ -1,7 +1,9 @@
 package fi.hsl.jore4.auth.apipublic.v1
 
+import com.nimbusds.oauth2.sdk.ResponseType
+import com.nimbusds.oauth2.sdk.id.ClientID
+import com.nimbusds.openid.connect.sdk.AuthenticationRequest
 import fi.hsl.jore4.auth.authentication.OIDCProperties
-import fi.hsl.jore4.auth.authentication.OIDCUtil
 import fi.hsl.jore4.auth.authentication.SessionKeys
 import fi.hsl.jore4.auth.common.ApiRedirectUtil.Companion.createRedirect
 import org.slf4j.Logger
@@ -9,41 +11,57 @@ import org.slf4j.LoggerFactory
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
-import org.springframework.web.util.UriComponentsBuilder.fromUriString
 import java.net.URI
 import java.util.*
 import javax.servlet.http.HttpServletRequest
+import com.nimbusds.oauth2.sdk.*;
+import com.nimbusds.openid.connect.sdk.*;
+import com.nimbusds.oauth2.sdk.id.*;
+import fi.hsl.jore4.auth.authentication.OIDCProviderMetadataSupplier
+import fi.hsl.jore4.auth.authentication.OIDCUtil
+import org.springframework.web.util.UriBuilder
+import org.springframework.web.util.UriComponentsBuilder
+import java.net.URLEncoder
 
 @RestController
 @RequestMapping("/api/public/v1.0")
 open class OIDCLoginApiController(
         private val oidcProperties: OIDCProperties,
+        private val oidcProviderMetadataSupplier: OIDCProviderMetadataSupplier,
         private val request: HttpServletRequest
 ) : LoginApi {
 
     override fun login(clientRedirectUrl: String?, locale: String?): ResponseEntity<Void> {
-        val state = UUID.randomUUID().toString()
-        val urlBuilder = fromUriString(oidcProperties.loginUri)
-                .queryParam("response_type", "code")
-                .queryParam("client_id", oidcProperties.clientId)
-                .queryParam("redirect_uri", OIDCUtil.buildRedirectUri(oidcProperties.redirectUri, clientRedirectUrl))
-                .queryParam("state", state)
-                .queryParam("type", oidcProperties.clientType)
-                .queryParam("scope", "profile")//"externalpermissions.query")
+        val clientID = ClientID(oidcProperties.clientId)
 
-        if (locale != null) {
-            urlBuilder.queryParam("locale", locale)
-        }
-        val loginUri: URI = urlBuilder
-                .build()
-                .encode()
-                .toUri()
+        // The client callback URL
+        val callback = OIDCExchangeApiController.createCallbackUrl(oidcProperties.clientBaseUrl, clientRedirectUrl)
 
-        LOG.info("Redirecting to OIDC login: {}", loginUri)
+        // Generate random state string to securely pair the callback to this request
+        val state = State()
+
+        // Generate nonce for the ID token
+        val nonce = Nonce()
+
+        // Compose the OpenID authentication request (for the code flow)
+        val authRequestUri = AuthenticationRequest.Builder(
+            ResponseType("code"),
+            Scope("openid", "profile"),
+            clientID,
+            callback
+        )
+            .endpointURI(oidcProviderMetadataSupplier.providerMetadata.authorizationEndpointURI)
+            .state(state)
+            .nonce(nonce)
+            .build()
+            .toURI()
+
+        LOG.info("Redirecting to OIDC login: {}", authRequestUri)
 
         request.session?.setAttribute(SessionKeys.OIDC_STATE_KEY, state)
                 ?: throw IllegalArgumentException("Session not found")
-        return createRedirect(loginUri)
+
+        return createRedirect(authRequestUri)
     }
 
     companion object {

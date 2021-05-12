@@ -64,10 +64,7 @@ open class JwtTokenVerificationKeyService(
     }
 
     private fun getKeyQueryUrl(keyType: OIDCKeyType): String {
-        return when (keyType) {
-            OIDCKeyType.INTEGRATION -> properties.integrationTokenVerificationKeyUri
-            OIDCKeyType.USER_ACCESS_TOKEN -> properties.userTokenVerificationKeyUri
-        }
+        return "aaa"
     }
 
     companion object {

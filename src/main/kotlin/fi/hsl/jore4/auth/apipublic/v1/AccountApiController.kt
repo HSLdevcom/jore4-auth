@@ -27,7 +27,7 @@ open class AccountApiController(
         LOGGER.info("Fetching account information for currently logged in user")
 
         val session = (RequestContextHolder.getRequestAttributes() as ServletRequestAttributes).request.getSession(false)
-        val accessToken: String = session.getAttribute(SessionKeys.ACCESS_TOKEN_KEY) as String?
+        val accessToken: String = session.getAttribute(SessionKeys.ACCESS_TOKEN_KEY)?.toString()
             ?: throw UnauthorizedException("No access token found in session, not authenticated")
 
         val accountDTO: AccountApiDTO = accountService.getActiveUserAccount(accessToken)
