@@ -1,0 +1,39 @@
+openapi: "3.0.0"
+
+paths:
+  login:
+    get:
+      tags:
+        - authentication
+      summary: Login endpoint
+      description: Redirects user to OIDC provider
+      operationId: login
+      parameters:
+        - in: query
+          name: clientRedirectUrl
+          required: false
+          schema:
+            type: string
+          description: Url to which user is directed after successful login.
+        - in: query
+          name: locale
+          required: false
+          schema:
+            type: string
+          description: The preferred locale of the user signing in.
+      produces:
+        - application/json
+      responses:
+        302:
+          description: Redirect to OIDC provider
+  logout:
+    get:
+      tags:
+        - authentication
+      summary: Logout endpoint
+      operationId: logout
+      produces:
+        - application/json
+      responses:
+        302:
+          description: Redirect to OIDC provider logout
