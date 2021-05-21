@@ -1,6 +1,7 @@
 package fi.hsl.jore4.auth.account
 
 import fi.hsl.jore4.auth.apipublic.v1.model.AccountApiDTO
+import fi.hsl.jore4.auth.authentication.OIDCProviderMetadataSupplier
 import okhttp3.MediaType
 import okhttp3.OkHttpClient
 import okhttp3.Request
@@ -13,7 +14,9 @@ import org.springframework.transaction.annotation.Transactional
 import org.springframework.web.client.RestTemplate
 
 @Service
-open class AccountService {
+open class AccountService(
+    private val oidcProviderMetadataSupplier: OIDCProviderMetadataSupplier
+) {
 
     companion object {
         private val LOGGER: Logger = LoggerFactory.getLogger(AccountService::class.java)
@@ -26,7 +29,7 @@ open class AccountService {
             .addHeader("Accept", "application/json;charset=UTF-8")
                 .addHeader("Authorization", "Bearer $accessToken")
             .get()
-            .url("https://hslid-dev.t5.fi/openid/userinfo")
+            .url(oidcProviderMetadataSupplier.providerMetadata.userInfoEndpointURI.toURL())
             .build())
             .execute()
 
