@@ -1,9 +1,11 @@
 package fi.hsl.jore4.auth.web
 
 import fi.hsl.jore4.auth.common.*
+import io.jsonwebtoken.ExpiredJwtException
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.http.HttpStatus
+import org.springframework.security.authentication.BadCredentialsException
 import org.springframework.web.bind.MethodArgumentNotValidException
 import org.springframework.web.bind.annotation.ControllerAdvice
 import org.springframework.web.bind.annotation.ExceptionHandler
@@ -51,13 +53,25 @@ open class CommonErrorHandler {
     @ExceptionHandler(ForbiddenAccessException::class)
     @ResponseStatus(HttpStatus.FORBIDDEN)
     fun processForbiddenAccessException(ex: ForbiddenAccessException) {
-        LOGGER.error("Fobidden access exception", ex)
+        LOGGER.error("Forbidden access exception", ex)
     }
 
     @ExceptionHandler(UnauthorizedException::class)
     @ResponseStatus(HttpStatus.UNAUTHORIZED)
     fun processUnauthorizedException(ex: UnauthorizedException) {
         LOGGER.error("Unauthorized exception", ex)
+    }
+
+    @ExceptionHandler(BadCredentialsException::class)
+    @ResponseStatus(HttpStatus.UNAUTHORIZED)
+    fun processUnauthorizedException(ex: BadCredentialsException) {
+        LOGGER.error("Bad credentials exception", ex)
+    }
+
+    @ExceptionHandler(ExpiredJwtException::class)
+    @ResponseStatus(HttpStatus.UNAUTHORIZED)
+    fun processUnauthorizedException(ex: ExpiredJwtException) {
+        LOGGER.error("Expired JWT exception", ex)
     }
 
     @ExceptionHandler(ConstraintViolationException::class)

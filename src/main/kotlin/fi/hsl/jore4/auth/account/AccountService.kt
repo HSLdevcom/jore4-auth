@@ -1,6 +1,7 @@
 package fi.hsl.jore4.auth.account
 
 import fi.hsl.jore4.auth.apipublic.v1.model.AccountApiDTO
+import fi.hsl.jore4.auth.authentication.OIDCAuthInterceptor
 import fi.hsl.jore4.auth.authentication.OIDCProviderMetadataSupplier
 import okhttp3.OkHttpClient
 import okhttp3.Request
@@ -11,23 +12,26 @@ import org.springframework.stereotype.Service
 
 @Service
 open class AccountService(
-    private val oidcProviderMetadataSupplier: OIDCProviderMetadataSupplier
+    private val oidcProviderMetadataSupplier: OIDCProviderMetadataSupplier,
+    private val oidcAuthInterceptor: OIDCAuthInterceptor
 ) {
 
     companion object {
         private val LOGGER: Logger = LoggerFactory.getLogger(AccountService::class.java)
     }
 
-    open fun getActiveUserAccount(accessToken: String): AccountApiDTO {
+    open fun getActiveUserAccount(): AccountApiDTO {
 
-        val response = OkHttpClient.Builder().build().newCall(
-            Request.Builder()
-            .addHeader("Accept", "application/json;charset=UTF-8")
-                .addHeader("Authorization", "Bearer $accessToken")
-            .get()
-            .url(oidcProviderMetadataSupplier.providerMetadata.userInfoEndpointURI.toURL())
-            .build())
-            .execute()
+        val response = OkHttpClient.Builder()
+            .addInterceptor(oidcAuthInterceptor)
+            .build()
+            .newCall(
+                Request.Builder()
+                .addHeader("Accept", "application/json;charset=UTF-8")
+                .get()
+                .url(oidcProviderMetadataSupplier.providerMetadata.userInfoEndpointURI.toURL())
+                .build())
+                .execute()
 
         val responseString = response.body()!!.string()
         val jsonObject = JSONObject(responseString)

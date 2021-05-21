@@ -63,7 +63,7 @@ open class PublicKeyResolver(
             return key.toRSAKey().toRSAPublicKey()
         }
 
-        throw KeyException("Could not find key for id ${keyId}")
+        throw KeyException("Could not find key for id $keyId")
     }
 
     companion object {

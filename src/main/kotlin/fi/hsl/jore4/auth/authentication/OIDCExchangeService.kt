@@ -66,7 +66,7 @@ open class OIDCExchangeService(
         val accessToken = successResponse.oidcTokens.accessToken
         val refreshToken = successResponse.oidcTokens.refreshToken
 
-        authenticationService.loginUsingAccessToken(accessToken)
+        authenticationService.loginWithAccessToken(accessToken)
 
         session.setAttribute(SessionKeys.ACCESS_TOKEN_KEY, accessToken)
         session.setAttribute(SessionKeys.REFRESH_TOKEN_KEY, refreshToken)

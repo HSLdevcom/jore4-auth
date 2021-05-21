@@ -12,9 +12,8 @@ import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
 import javax.servlet.http.HttpServletRequest
-import com.nimbusds.oauth2.sdk.*;
-import com.nimbusds.openid.connect.sdk.*;
-import com.nimbusds.oauth2.sdk.id.*;
+import com.nimbusds.oauth2.sdk.*
+import com.nimbusds.oauth2.sdk.id.*
 import fi.hsl.jore4.auth.authentication.OIDCProviderMetadataSupplier
 
 @RestController
@@ -34,9 +33,6 @@ open class OIDCLoginApiController(
         // Generate random state string to securely pair the callback to this request
         val state = State()
 
-        // Generate nonce for the ID token
-        val nonce = Nonce()
-
         // Compose the OpenID authentication request (for the code flow)
         val authRequestUri = AuthenticationRequest.Builder(
             ResponseType("code"),
@@ -46,7 +42,6 @@ open class OIDCLoginApiController(
         )
             .endpointURI(oidcProviderMetadataSupplier.providerMetadata.authorizationEndpointURI)
             .state(state)
-            .nonce(nonce)
             .build()
             .toURI()
 

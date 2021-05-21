@@ -81,8 +81,5 @@ open class WebSecurityConfig {
         private val roleUserApiPatterns = arrayOf(
                 "/api/**"
         )
-
-        private fun prefixPaths(paths: Array<String>, prefix: String) =
-                paths.map { pattern -> "$prefix$pattern" }.toTypedArray()
     }
 }

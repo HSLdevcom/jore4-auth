@@ -1,4 +1,4 @@
-package fi.hsl.jore4.auth.security;
+package fi.hsl.jore4.auth.security
 
 import org.springframework.security.web.csrf.CsrfToken
 import org.springframework.web.filter.OncePerRequestFilter
