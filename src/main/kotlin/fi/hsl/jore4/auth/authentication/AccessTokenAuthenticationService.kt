@@ -15,7 +15,7 @@ open class AccessTokenAuthenticationService(
     open fun loginUsingAccessToken(accessToken: AccessToken): Authentication {
         try {
             LOG.debug("Logging in using access token...")
-            //val claims = jwtTokenParser.parseAndVerify(accessToken)
+            val claims = jwtTokenParser.parseAndVerify(accessToken.toString())
             val authentication: Authentication = PreAuthenticatedAuthenticationToken(1, accessToken)
 
             SecurityContextHolder.getContext().authentication = authentication

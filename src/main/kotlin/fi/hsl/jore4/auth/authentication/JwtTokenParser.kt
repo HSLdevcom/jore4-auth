@@ -9,11 +9,11 @@ import org.springframework.stereotype.Component
 @Component
 open class JwtTokenParser(
         private val publicKeyResolver: PublicKeyResolver,
-        private val verificationKeyService: JwtTokenVerificationKeyService
+        private val oidcProperties: OIDCProperties
 ) {
 
     open fun parseAndVerify(jwtToken: String): Jws<Claims> {
-        return parseAndVerify(jwtToken, "aaa")
+        return parseAndVerify(jwtToken, oidcProperties.clientId)
     }
 
     open fun parseAndVerify(jwtToken: String, requiredAudience: String): Jws<Claims> {
@@ -21,15 +21,14 @@ open class JwtTokenParser(
             parseClaims(jwtToken, requiredAudience)
 
         } catch (e: UnsupportedJwtException) {
-            LOGGER.warn("First authorization attempt with malformed JWT token. Refreshing verification key and trying again", e)
-            refreshVerificationKeysAndParseClaims(jwtToken, requiredAudience)
-
+            LOGGER.warn("Authorization attempt with malformed JWT token.", e)
+            throw BadCredentialsException("Invalid JWT", e)
         } catch (e: MalformedJwtException) {
-            LOGGER.warn("First authorization attempt with malformed JWT token. Refreshing verification key and trying again", e)
-            refreshVerificationKeysAndParseClaims(jwtToken, requiredAudience)
+            LOGGER.warn("Authorization attempt with malformed JWT token.", e)
+            throw BadCredentialsException("Invalid JWT", e)
         } catch (e: SignatureException) {
-            LOGGER.warn("First authorization attempt with malformed JWT token. Refreshing verification key and trying again", e)
-            refreshVerificationKeysAndParseClaims(jwtToken, requiredAudience)
+            LOGGER.warn("Authorization attempt with malformed JWT token.", e)
+            throw BadCredentialsException("Invalid JWT", e)
         }
     }
 
@@ -50,25 +49,6 @@ open class JwtTokenParser(
         } catch (e: RuntimeException) {
             LOGGER.warn("Exception decoding JWT token.", e)
             throw BadCredentialsException("Unknown JWT exception", e)
-        }
-    }
-
-    private fun refreshVerificationKeysAndParseClaims(jwtToken: String,
-                                                      requiredAudience: String): Jws<Claims> {
-        try {
-            verificationKeyService.refreshVerificationKey(OIDCKeyType.INTEGRATION)
-            verificationKeyService.refreshVerificationKey(OIDCKeyType.USER_ACCESS_TOKEN)
-            return parseClaims(jwtToken, requiredAudience)
-        } catch (e: UnsupportedJwtException) {
-            LOGGER.warn("Authorization attempt with malformed JWT token.", e)
-            throw BadCredentialsException("Invalid JWT", e)
-
-        } catch (e: MalformedJwtException) {
-            LOGGER.warn("Authorization attempt with malformed JWT token.", e)
-            throw BadCredentialsException("Invalid JWT", e)
-        } catch (e: SignatureException) {
-            LOGGER.warn("Authorization attempt with malformed JWT token.", e)
-            throw BadCredentialsException("Invalid JWT", e)
         }
     }
 
