@@ -11,17 +11,11 @@ import org.slf4j.LoggerFactory
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
-import java.net.URI
-import java.util.*
 import javax.servlet.http.HttpServletRequest
 import com.nimbusds.oauth2.sdk.*;
 import com.nimbusds.openid.connect.sdk.*;
 import com.nimbusds.oauth2.sdk.id.*;
 import fi.hsl.jore4.auth.authentication.OIDCProviderMetadataSupplier
-import fi.hsl.jore4.auth.authentication.OIDCUtil
-import org.springframework.web.util.UriBuilder
-import org.springframework.web.util.UriComponentsBuilder
-import java.net.URLEncoder
 
 @RestController
 @RequestMapping("/api/public/v1.0")

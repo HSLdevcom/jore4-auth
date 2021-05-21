@@ -8,19 +8,14 @@ import com.nimbusds.oauth2.sdk.id.ClientID
 import com.nimbusds.oauth2.sdk.id.State
 import com.nimbusds.openid.connect.sdk.OIDCTokenResponse
 import com.nimbusds.openid.connect.sdk.OIDCTokenResponseParser
-import fi.hsl.jore4.auth.account.AccountService
 import fi.hsl.jore4.auth.apipublic.v1.OIDCExchangeApiController
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Value
-import org.springframework.core.ParameterizedTypeReference
 import org.springframework.http.HttpHeaders
-import org.springframework.http.HttpMethod
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.stereotype.Service
-import org.springframework.web.client.RestTemplate
-import org.springframework.web.util.UriComponentsBuilder
 import java.net.URI
 import javax.naming.AuthenticationException
 import javax.servlet.http.HttpSession
@@ -30,14 +25,10 @@ open class OIDCExchangeService(
         private val oidcProperties: OIDCProperties,
         private val oidcProviderMetadataSupplier: OIDCProviderMetadataSupplier,
         private val authenticationService: AccessTokenAuthenticationService,
-        private val restTemplate: RestTemplate,
         @Value("\${frontend.url}") private val frontendUrl: String
 ) {
     companion object {
         private val LOGGER: Logger = LoggerFactory.getLogger(OIDCExchangeService::class.java)
-
-        private const val TOKEN_RESPONSE_ACCESS_TOKEN_KEY = "access_token"
-        private const val TOKEN_RESPONSE_REFRESH_TOKEN_KEY = "refresh_token"
     }
 
     open fun exchangeTokens(code: AuthorizationCode, state: State, session: HttpSession, clientRedirectUrl: String?): ResponseEntity<Any> {
@@ -71,8 +62,7 @@ open class OIDCExchangeService(
 
         val successResponse = tokenResponse.toSuccessResponse() as OIDCTokenResponse
 
-        // Get the ID and access token, the server may also return a refresh token
-        val idToken = successResponse.oidcTokens.idToken
+        // Get the access token and refresh token
         val accessToken = successResponse.oidcTokens.accessToken
         val refreshToken = successResponse.oidcTokens.refreshToken
 

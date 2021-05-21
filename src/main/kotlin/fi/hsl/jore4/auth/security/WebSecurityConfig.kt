@@ -4,8 +4,6 @@ import fi.hsl.jore4.auth.Profiles
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.context.annotation.Profile
-import org.springframework.core.Ordered
-import org.springframework.core.annotation.Order
 import org.springframework.http.HttpMethod
 import org.springframework.http.HttpStatus
 import org.springframework.security.access.hierarchicalroles.RoleHierarchy
@@ -43,7 +41,6 @@ open class WebSecurityConfig {
                     .addFilterAfter(CsrfCookieGeneratorFilter(), CsrfFilter::class.java)
 
                     .csrf()
-                    .ignoringAntMatchers("/api/v1.0/payment/response/**")
                     .csrfTokenRepository(LazyCsrfTokenRepository(csrfTokenRepository()))
 
                     .and()
@@ -78,8 +75,6 @@ open class WebSecurityConfig {
                 "/api/public/v1.0/login",
                 "/api/public/v1.0/logout",
                 "/api/public/v1.0/account/active",
-                "/api/public/v1.0/config",
-                "/api/v1.0/payment/response/**",
                 "/api/v1.0/oidc/exchange"
         )
 

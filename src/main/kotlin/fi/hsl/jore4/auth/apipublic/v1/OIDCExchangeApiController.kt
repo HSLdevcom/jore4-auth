@@ -3,7 +3,6 @@ package fi.hsl.jore4.auth.apipublic.v1
 import com.nimbusds.oauth2.sdk.AuthorizationCode
 import com.nimbusds.oauth2.sdk.id.State
 import fi.hsl.jore4.auth.authentication.OIDCExchangeService
-import fi.hsl.jore4.auth.authentication.OIDCProperties
 import io.swagger.annotations.ApiOperation
 import io.swagger.annotations.ApiParam
 import io.swagger.annotations.ApiResponse
@@ -21,8 +20,8 @@ class OIDCExchangeApiController(
         private val exchangeService: OIDCExchangeService
 ) {
     companion object {
-        const final val EXCHANGE_ENDPOINT_PATH = "/api/v1.0/oidc/exchange"
-        const final val CLIENT_REDIRECT_URL_QUERY_PARAM = "clientRedirectUrl"
+        const val EXCHANGE_ENDPOINT_PATH = "/api/v1.0/oidc/exchange"
+        const val CLIENT_REDIRECT_URL_QUERY_PARAM = "clientRedirectUrl"
 
         fun createCallbackUrl(clientBaseUrl: String, clientRedirectUrl: String?): URI {
             var builder = UriComponentsBuilder

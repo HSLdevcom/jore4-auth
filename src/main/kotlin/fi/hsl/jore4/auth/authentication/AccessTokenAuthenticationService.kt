@@ -6,7 +6,6 @@ import org.springframework.security.core.Authentication
 import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.security.web.authentication.preauth.PreAuthenticatedAuthenticationToken
 import org.springframework.stereotype.Service
-import org.springframework.transaction.annotation.Transactional
 
 @Service
 open class AccessTokenAuthenticationService(
@@ -14,16 +13,16 @@ open class AccessTokenAuthenticationService(
 ) {
     open fun loginUsingAccessToken(accessToken: AccessToken): Authentication {
         try {
-            LOG.debug("Logging in using access token...")
+            LOGGER.debug("Logging in using access token...")
             val claims = jwtTokenParser.parseAndVerify(accessToken.toString())
             val authentication: Authentication = PreAuthenticatedAuthenticationToken(1, accessToken)
 
             SecurityContextHolder.getContext().authentication = authentication
 
-            LOG.debug("Successfully logged in.")
+            LOGGER.debug("Successfully logged in.")
             return authentication
         } catch (ex: Exception) {
-            LOG.debug("Login failed.")
+            LOGGER.debug("Login failed.")
 
             logout()
 
@@ -32,14 +31,14 @@ open class AccessTokenAuthenticationService(
     }
 
     private fun logout() {
-        LOG.debug("Logging out...")
+        LOGGER.debug("Logging out...")
 
         SecurityContextHolder.getContext().authentication = null
 
-        LOG.debug("Logged out.")
+        LOGGER.debug("Logged out.")
     }
 
     companion object {
-        private val LOG = LoggerFactory.getLogger(AccessTokenAuthenticationService::class.java)
+        private val LOGGER = LoggerFactory.getLogger(AccessTokenAuthenticationService::class.java)
     }
 }
