@@ -36,7 +36,7 @@ open class OIDCLoginApiController(
         // Compose the OpenID authentication request (for the code flow)
         val authRequestUri = AuthenticationRequest.Builder(
             ResponseType("code"),
-            Scope("openid", "profile"),
+            Scope("openid", "profile", "externalpermissions.query"),
             clientID,
             callback
         )
