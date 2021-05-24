@@ -5,10 +5,4 @@ definitions:
     description: >
       Contains information about the currently logged in user.
     type: object
-    properties:
-      firstName:
-        type: string
-        description: The first name of the user
-      lastName:
-        type: string
-        description: The last name of the user
+    additionalProperties: true

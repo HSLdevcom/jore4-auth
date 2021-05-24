@@ -1,13 +1,13 @@
 openapi: "3.0.0"
 
 paths:
-  getActiveAccount:
+  getAccount:
     get:
       tags:
         - account
-      summary: Active user account endpoint
+      summary: User account endpoint
       description: Returns account information of the currently logged in user
-      operationId: getActiveAccount
+      operationId: getAccount
       produces:
         - application/json
       responses:

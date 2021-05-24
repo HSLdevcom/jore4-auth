@@ -8,7 +8,7 @@ servers:
   - url: https://jore4.hsl.fi/api/auth/public/v1.0
 paths:
   /account:
-    $ref: './account.yaml#/paths/getActiveAccount'
+    $ref: './account.yaml#/paths/getAccount'
   /login:
     $ref: './authentication.yaml#/paths/login'
   /logout:

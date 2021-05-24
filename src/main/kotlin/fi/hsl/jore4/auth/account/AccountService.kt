@@ -1,12 +1,11 @@
 package fi.hsl.jore4.auth.account
 
-import fi.hsl.jore4.auth.apipublic.v1.model.AccountApiDTO
+import com.fasterxml.jackson.databind.ObjectMapper
 import fi.hsl.jore4.auth.authentication.OIDCAuthInterceptor
 import fi.hsl.jore4.auth.authentication.OIDCProviderMetadataSupplier
 import fi.hsl.jore4.auth.web.UnauthorizedException
 import okhttp3.OkHttpClient
 import okhttp3.Request
-import org.json.JSONObject
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
@@ -21,7 +20,7 @@ open class AccountService(
         private val LOGGER: Logger = LoggerFactory.getLogger(AccountService::class.java)
     }
 
-    open fun getActiveUserAccount(): AccountApiDTO {
+    open fun getAccount(): Map<String, Any> {
 
         val response = OkHttpClient.Builder()
             .addInterceptor(oidcAuthInterceptor)
@@ -38,12 +37,8 @@ open class AccountService(
             throw UnauthorizedException("Could not retrieve account data")
         }
 
-        val responseString = response.body()!!.string()
-        val jsonObject = JSONObject(responseString)
+        val result: Map<String, Any> = ObjectMapper().readValue(response.body()!!.string(), HashMap<String, Any>().javaClass)
 
-        val account = AccountApiDTO()
-        account.firstName = jsonObject.getString("given_name")
-        account.lastName = jsonObject.getString("family_name")
-        return account
+        return result
     }
 }
