@@ -15,10 +15,6 @@ import fi.hsl.jore4.auth.authentication.SessionKeys.Companion.REFRESH_TOKEN_KEY
 import fi.hsl.jore4.auth.web.UnauthorizedException
 import io.jsonwebtoken.*
 import org.slf4j.LoggerFactory
-import org.springframework.security.authentication.BadCredentialsException
-import org.springframework.security.core.Authentication
-import org.springframework.security.core.context.SecurityContextHolder
-import org.springframework.security.web.authentication.preauth.PreAuthenticatedAuthenticationToken
 import org.springframework.stereotype.Service
 import javax.servlet.http.HttpSession
 
@@ -28,33 +24,6 @@ open class AccessTokenAuthenticationService(
         private val oidcProperties: OIDCProperties,
         private val oidcProviderMetadataSupplier: OIDCProviderMetadataSupplier
 ) {
-    open fun loginWithAccessToken(accessToken: AccessToken): Authentication {
-        try {
-            LOGGER.debug("Logging in using access token...")
-            val claims = parseAndVerifyAccessToken(accessToken)
-            val authentication: Authentication = PreAuthenticatedAuthenticationToken(1, accessToken)
-
-            SecurityContextHolder.getContext().authentication = authentication
-
-            LOGGER.debug("Successfully logged in.")
-            return authentication
-        } catch (ex: Exception) {
-            LOGGER.debug("Login failed.")
-
-            logout()
-
-            throw ex
-        }
-    }
-
-    private fun logout() {
-        LOGGER.debug("Logging out...")
-
-        SecurityContextHolder.getContext().authentication = null
-
-        LOGGER.debug("Logged out.")
-    }
-
     open fun verifyOrRefreshTokens(session: HttpSession): AccessToken? {
         try {
             val accessToken = session.getAttribute(ACCESS_TOKEN_KEY) as AccessToken
@@ -63,18 +32,17 @@ open class AccessTokenAuthenticationService(
             }
             catch (expiredEx: ExpiredJwtException) {
                 val newAccessToken = refreshTokens(session)
-                loginWithAccessToken(newAccessToken)
+                parseAndVerifyAccessToken(newAccessToken)
                 return newAccessToken
             }
         } catch (ex: java.lang.Exception) {
-            logout()
             session.removeAttribute(ACCESS_TOKEN_KEY)
             session.removeAttribute(REFRESH_TOKEN_KEY)
         }
         return null
     }
 
-    private fun parseAndVerifyAccessToken(accessToken: AccessToken): Jws<Claims> {
+    open fun parseAndVerifyAccessToken(accessToken: AccessToken): Jws<Claims> {
         try {
             return Jwts.parser()
                 .setSigningKeyResolver(publicKeyResolver)
@@ -82,19 +50,19 @@ open class AccessTokenAuthenticationService(
                 .parseClaimsJws(accessToken.toString())
         } catch (e: UnsupportedJwtException) {
             LOGGER.warn("Authorization attempt with malformed JWT token.", e)
-            throw BadCredentialsException("Invalid JWT", e)
+            throw UnauthorizedException("Invalid JWT")
         } catch (e: MalformedJwtException) {
             LOGGER.warn("Authorization attempt with malformed JWT token.", e)
-            throw BadCredentialsException("Invalid JWT", e)
+            throw UnauthorizedException("Invalid JWT")
         } catch (e: SignatureException) {
             LOGGER.warn("Authorization attempt with malformed JWT token.", e)
-            throw BadCredentialsException("Invalid JWT", e)
+            throw UnauthorizedException("Invalid JWT")
         } catch (e: IllegalArgumentException) {
             LOGGER.warn("Authorization attempt with malformed JWT token.", e)
-            throw BadCredentialsException("Invalid JWT", e)
+            throw UnauthorizedException("Invalid JWT")
         } catch (e: RuntimeException) {
             LOGGER.warn("Exception decoding JWT token.", e)
-            throw BadCredentialsException("Unknown JWT exception", e)
+            throw UnauthorizedException("Unknown JWT exception")
         }
     }
 

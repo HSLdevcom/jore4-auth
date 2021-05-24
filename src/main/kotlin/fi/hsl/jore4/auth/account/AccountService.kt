@@ -3,6 +3,7 @@ package fi.hsl.jore4.auth.account
 import fi.hsl.jore4.auth.apipublic.v1.model.AccountApiDTO
 import fi.hsl.jore4.auth.authentication.OIDCAuthInterceptor
 import fi.hsl.jore4.auth.authentication.OIDCProviderMetadataSupplier
+import fi.hsl.jore4.auth.web.UnauthorizedException
 import okhttp3.OkHttpClient
 import okhttp3.Request
 import org.json.JSONObject
@@ -32,6 +33,10 @@ open class AccountService(
                 .url(oidcProviderMetadataSupplier.providerMetadata.userInfoEndpointURI.toURL())
                 .build())
                 .execute()
+
+        if (!response.isSuccessful) {
+            throw UnauthorizedException("Could not retrieve account data")
+        }
 
         val responseString = response.body()!!.string()
         val jsonObject = JSONObject(responseString)
