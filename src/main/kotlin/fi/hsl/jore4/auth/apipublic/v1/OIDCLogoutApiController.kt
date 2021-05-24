@@ -1,7 +1,7 @@
 package fi.hsl.jore4.auth.apipublic.v1
 
-import fi.hsl.jore4.auth.authentication.OIDCProperties
-import fi.hsl.jore4.auth.authentication.OIDCProviderMetadataSupplier
+import fi.hsl.jore4.auth.oidc.OIDCProperties
+import fi.hsl.jore4.auth.oidc.OIDCProviderMetadataSupplier
 import fi.hsl.jore4.auth.common.ApiRedirectUtil.Companion.createRedirect
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory

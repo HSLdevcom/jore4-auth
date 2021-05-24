@@ -1,7 +1,7 @@
-package fi.hsl.jore4.auth.common
+package fi.hsl.jore4.auth.web
 
 /**
  * This exception is thrown if the requested information is
- * not found from the database.
+ * not found.
  */
 class NotFoundException(message: String) : RuntimeException(message)

@@ -2,7 +2,7 @@ package fi.hsl.jore4.auth.apipublic.v1
 
 import com.nimbusds.oauth2.sdk.AuthorizationCode
 import com.nimbusds.oauth2.sdk.id.State
-import fi.hsl.jore4.auth.authentication.OIDCExchangeService
+import fi.hsl.jore4.auth.oidc.OIDCExchangeService
 import io.swagger.annotations.ApiOperation
 import io.swagger.annotations.ApiParam
 import io.swagger.annotations.ApiResponse

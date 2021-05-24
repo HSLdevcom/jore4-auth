@@ -1,7 +1,7 @@
-package fi.hsl.jore4.auth.authentication
+package fi.hsl.jore4.auth.oidc
 
 import com.nimbusds.oauth2.sdk.token.AccessToken
-import fi.hsl.jore4.auth.authentication.SessionKeys.Companion.ACCESS_TOKEN_KEY
+import fi.hsl.jore4.auth.oidc.SessionKeys.Companion.ACCESS_TOKEN_KEY
 import okhttp3.*
 import okhttp3.Response
 import org.slf4j.LoggerFactory

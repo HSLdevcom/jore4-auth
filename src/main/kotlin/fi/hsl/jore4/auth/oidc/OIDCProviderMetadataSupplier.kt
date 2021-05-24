@@ -1,4 +1,4 @@
-package fi.hsl.jore4.auth.authentication
+package fi.hsl.jore4.auth.oidc
 
 import org.springframework.context.event.ContextRefreshedEvent
 import org.springframework.context.event.EventListener

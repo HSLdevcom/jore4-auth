@@ -3,8 +3,8 @@ package fi.hsl.jore4.auth.apipublic.v1
 import com.nimbusds.oauth2.sdk.ResponseType
 import com.nimbusds.oauth2.sdk.id.ClientID
 import com.nimbusds.openid.connect.sdk.AuthenticationRequest
-import fi.hsl.jore4.auth.authentication.OIDCProperties
-import fi.hsl.jore4.auth.authentication.SessionKeys
+import fi.hsl.jore4.auth.oidc.OIDCProperties
+import fi.hsl.jore4.auth.oidc.SessionKeys
 import fi.hsl.jore4.auth.common.ApiRedirectUtil.Companion.createRedirect
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.RestController
 import javax.servlet.http.HttpServletRequest
 import com.nimbusds.oauth2.sdk.*
 import com.nimbusds.oauth2.sdk.id.*
-import fi.hsl.jore4.auth.authentication.OIDCProviderMetadataSupplier
+import fi.hsl.jore4.auth.oidc.OIDCProviderMetadataSupplier
 
 @RestController
 @RequestMapping("/api/public/v1.0")

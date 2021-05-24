@@ -1,8 +1,8 @@
 package fi.hsl.jore4.auth.account
 
 import com.fasterxml.jackson.databind.ObjectMapper
-import fi.hsl.jore4.auth.authentication.OIDCAuthInterceptor
-import fi.hsl.jore4.auth.authentication.OIDCProviderMetadataSupplier
+import fi.hsl.jore4.auth.oidc.OIDCAuthInterceptor
+import fi.hsl.jore4.auth.oidc.OIDCProviderMetadataSupplier
 import fi.hsl.jore4.auth.web.UnauthorizedException
 import okhttp3.OkHttpClient
 import okhttp3.Request
@@ -22,6 +22,8 @@ open class AccountService(
 
     open fun getAccount(): Map<String, Any> {
 
+        LOGGER.info("Fetching account info...")
+
         val response = OkHttpClient.Builder()
             .addInterceptor(oidcAuthInterceptor)
             .build()
@@ -37,7 +39,10 @@ open class AccountService(
             throw UnauthorizedException("Could not retrieve account data")
         }
 
-        val result: Map<String, Any> = ObjectMapper().readValue(response.body()!!.string(), HashMap<String, Any>().javaClass)
+        val result: Map<String, Any> =
+            ObjectMapper().readValue(response.body()!!.string(), HashMap<String, Any>().javaClass)
+
+        LOGGER.info("Fetched account info.")
 
         return result
     }

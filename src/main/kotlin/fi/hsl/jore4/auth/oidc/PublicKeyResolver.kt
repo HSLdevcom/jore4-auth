@@ -1,4 +1,4 @@
-package fi.hsl.jore4.auth.authentication
+package fi.hsl.jore4.auth.oidc
 
 import com.nimbusds.jose.jwk.JWKSet
 import com.nimbusds.jose.jwk.KeyType

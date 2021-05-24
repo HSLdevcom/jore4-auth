@@ -1,4 +1,4 @@
-package fi.hsl.jore4.auth.authentication
+package fi.hsl.jore4.auth.oidc
 
 import com.nimbusds.oauth2.sdk.*
 import com.nimbusds.oauth2.sdk.auth.ClientAuthentication
@@ -84,7 +84,6 @@ open class OIDCExchangeService(
     }
 
     private fun verifyState(state: State, session: HttpSession) {
-
         if (state != session.getAttribute(SessionKeys.OIDC_STATE_KEY)) {
             throw AuthenticationException("Invalid OIDC state, did you change the browser while logging in?")
         }

@@ -1,4 +1,4 @@
-package fi.hsl.jore4.auth.authentication
+package fi.hsl.jore4.auth.oidc
 
 import com.nimbusds.oauth2.sdk.AuthorizationGrant
 import com.nimbusds.oauth2.sdk.RefreshTokenGrant
@@ -10,8 +10,8 @@ import com.nimbusds.oauth2.sdk.auth.Secret
 import com.nimbusds.oauth2.sdk.id.ClientID
 import com.nimbusds.oauth2.sdk.token.AccessToken
 import com.nimbusds.oauth2.sdk.token.RefreshToken
-import fi.hsl.jore4.auth.authentication.SessionKeys.Companion.ACCESS_TOKEN_KEY
-import fi.hsl.jore4.auth.authentication.SessionKeys.Companion.REFRESH_TOKEN_KEY
+import fi.hsl.jore4.auth.oidc.SessionKeys.Companion.ACCESS_TOKEN_KEY
+import fi.hsl.jore4.auth.oidc.SessionKeys.Companion.REFRESH_TOKEN_KEY
 import fi.hsl.jore4.auth.web.UnauthorizedException
 import io.jsonwebtoken.*
 import org.slf4j.LoggerFactory

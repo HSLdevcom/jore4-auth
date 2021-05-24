@@ -1,4 +1,4 @@
-package fi.hsl.jore4.auth.authentication
+package fi.hsl.jore4.auth.oidc
 
 class SessionKeys {
     companion object {
