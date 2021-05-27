@@ -21,6 +21,10 @@ open class PublicKeyResolver(
     private val oidcProviderMetadataSupplier: OIDCProviderMetadataSupplier
 ) : SigningKeyResolver {
 
+    companion object {
+        private val LOGGER: Logger = LoggerFactory.getLogger(PublicKeyResolver::class.java)
+    }
+
     @Volatile
     private var jwkSet = JWKSet()
 
@@ -55,18 +59,14 @@ open class PublicKeyResolver(
             }
         }
 
-        if (key != null) {
-            if (!key.keyType.equals(KeyType.RSA)) {
-                throw KeyException("Keys of type ${key.keyType} not supported")
-            }
+        // if we didn't find a key
+        if (key == null) throw KeyException("Could not find key for id $keyId")
 
-            return key.toRSAKey().toRSAPublicKey()
+        // only RSA supported for now
+        if (!key.keyType.equals(KeyType.RSA)) {
+            throw KeyException("Keys of type ${key.keyType} not supported")
         }
 
-        throw KeyException("Could not find key for id $keyId")
-    }
-
-    companion object {
-        private val LOGGER: Logger = LoggerFactory.getLogger(PublicKeyResolver::class.java)
+        return key.toRSAKey().toRSAPublicKey()
     }
 }

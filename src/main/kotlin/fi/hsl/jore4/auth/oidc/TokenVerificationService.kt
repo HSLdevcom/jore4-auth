@@ -1,10 +1,8 @@
 package fi.hsl.jore4.auth.oidc
 
-import com.nimbusds.oauth2.sdk.AuthorizationGrant
 import com.nimbusds.oauth2.sdk.RefreshTokenGrant
 import com.nimbusds.oauth2.sdk.TokenRequest
 import com.nimbusds.oauth2.sdk.TokenResponse
-import com.nimbusds.oauth2.sdk.auth.ClientAuthentication
 import com.nimbusds.oauth2.sdk.auth.ClientSecretBasic
 import com.nimbusds.oauth2.sdk.auth.Secret
 import com.nimbusds.oauth2.sdk.id.ClientID
@@ -16,26 +14,32 @@ import fi.hsl.jore4.auth.web.UnauthorizedException
 import io.jsonwebtoken.*
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
+import javax.naming.AuthenticationException
 import javax.servlet.http.HttpSession
 
 @Service
-open class AccessTokenAuthenticationService(
+open class TokenVerificationService(
         private val publicKeyResolver: PublicKeyResolver,
         private val oidcProperties: OIDCProperties,
         private val oidcProviderMetadataSupplier: OIDCProviderMetadataSupplier
 ) {
+    companion object {
+        private val LOGGER = LoggerFactory.getLogger(TokenVerificationService::class.java)
+    }
+
     open fun verifyOrRefreshTokens(session: HttpSession): AccessToken? {
         try {
-            val accessToken = session.getAttribute(ACCESS_TOKEN_KEY) as AccessToken
+            val accessToken = (session.getAttribute(ACCESS_TOKEN_KEY)
+                ?: throw UnauthorizedException("No access token found in session"))
+                    as AccessToken
             try {
                 parseAndVerifyAccessToken(accessToken)
-            }
-            catch (expiredEx: ExpiredJwtException) {
+            } catch (expiredEx: ExpiredJwtException) {
                 val newAccessToken = refreshTokens(session)
                 parseAndVerifyAccessToken(newAccessToken)
                 return newAccessToken
             }
-        } catch (ex: java.lang.Exception) {
+        } catch (ex: Exception) {
             session.removeAttribute(ACCESS_TOKEN_KEY)
             session.removeAttribute(REFRESH_TOKEN_KEY)
         }
@@ -67,42 +71,32 @@ open class AccessTokenAuthenticationService(
     }
 
     private fun refreshTokens(session: HttpSession): AccessToken {
-        val refreshTokenStr = session.getAttribute(REFRESH_TOKEN_KEY)
-            ?: throw UnauthorizedException("No refresh token found in session, cannot refresh access token")
+        val refreshToken = (session.getAttribute(REFRESH_TOKEN_KEY)
+            ?: throw UnauthorizedException("No refresh token found in session, cannot refresh access token"))
+                as RefreshToken
 
-        // Construct the grant from the saved refresh token
-        val refreshToken = RefreshToken(refreshTokenStr.toString())
-        val refreshTokenGrant: AuthorizationGrant = RefreshTokenGrant(refreshToken)
-
-        // The credentials to authenticate the client at the token endpoint
-        val clientID = ClientID(oidcProperties.clientId)
-        val clientSecret = Secret(oidcProperties.clientSecret)
-        val clientAuth: ClientAuthentication = ClientSecretBasic(clientID, clientSecret)
-
-        // Make the token request
-        val request = TokenRequest(oidcProviderMetadataSupplier.providerMetadata.tokenEndpointURI, clientAuth, refreshTokenGrant)
+        // create the token request based on the refresh token
+        val request = TokenRequest(
+            oidcProviderMetadataSupplier.providerMetadata.tokenEndpointURI,
+            ClientSecretBasic(ClientID(oidcProperties.clientId), Secret(oidcProperties.clientSecret)),
+            RefreshTokenGrant(refreshToken)
+        )
 
         val response = TokenResponse.parse(request.toHTTPRequest().send())
 
         if (!response.indicatesSuccess()) {
-            // We got an error response...
-            val errorResponse = response.toErrorResponse()
-            throw UnauthorizedException("Access token refresh failed: $errorResponse")
+            throw AuthenticationException("Token refresh failed")
         }
 
         val successResponse = response.toSuccessResponse()
 
-        // Get the access token, the refresh token may be updated
         val newAccessToken = successResponse.tokens.accessToken
         val newRefreshToken = successResponse.tokens.refreshToken
 
+        // store the new access token (and the potentially new refresh token)
         session.setAttribute(ACCESS_TOKEN_KEY, newAccessToken)
         session.setAttribute(REFRESH_TOKEN_KEY, newRefreshToken)
 
         return newAccessToken
-    }
-
-    companion object {
-        private val LOGGER = LoggerFactory.getLogger(AccessTokenAuthenticationService::class.java)
     }
 }

@@ -22,10 +22,10 @@ import javax.servlet.http.HttpSession
 
 @Service
 open class OIDCExchangeService(
-        private val oidcProperties: OIDCProperties,
-        private val oidcProviderMetadataSupplier: OIDCProviderMetadataSupplier,
-        private val authenticationService: AccessTokenAuthenticationService,
-        @Value("\${frontend.url}") private val frontendUrl: String
+    private val oidcProperties: OIDCProperties,
+    private val oidcProviderMetadataSupplier: OIDCProviderMetadataSupplier,
+    private val verificationService: TokenVerificationService,
+    @Value("\${loginpage.url}") private val loginPageUrl: String
 ) {
     companion object {
         private val LOGGER: Logger = LoggerFactory.getLogger(OIDCExchangeService::class.java)
@@ -33,46 +33,38 @@ open class OIDCExchangeService(
 
     open fun exchangeTokens(code: AuthorizationCode, state: State, session: HttpSession, clientRedirectUrl: String?): ResponseEntity<Any> {
 
+        // verify that we're being called as a response to our request to authenticate
         verifyState(state, session)
 
-        // Construct the code grant from the code obtained from the authz endpoint
-        // and the original callback URI used at the authz endpoint
-        val callback = OIDCExchangeApiController.createCallbackUrl(oidcProperties.clientBaseUrl, clientRedirectUrl)
-        val codeGrant: AuthorizationGrant = AuthorizationCodeGrant(code, callback)
+        // create the exchange endpoint callback URI, to which the user will be redirected after authentication
+        val callback = OIDCExchangeApiController.createCallbackUri(oidcProperties.clientBaseUrl, clientRedirectUrl)
 
-        // The credentials to authenticate the client at the token endpoint
-        val clientID = ClientID(oidcProperties.clientId)
-        val clientSecret = Secret(oidcProperties.clientSecret)
-        val clientAuth: ClientAuthentication = ClientSecretBasic(clientID, clientSecret)
+        // create the token request based on the auth code
+        val request = TokenRequest(
+            oidcProviderMetadataSupplier.providerMetadata.tokenEndpointURI,
+            ClientSecretBasic(ClientID(oidcProperties.clientId), Secret(oidcProperties.clientSecret)),
+            AuthorizationCodeGrant(code, callback)
+        )
+        val response = OIDCTokenResponseParser.parse(request.toHTTPRequest().send())
 
-        // The token endpoint
-        val tokenEndpoint = oidcProviderMetadataSupplier.providerMetadata.tokenEndpointURI
-
-        // Make the token request
-        val request = TokenRequest(tokenEndpoint, clientAuth, codeGrant)
-
-        val tokenResponse = OIDCTokenResponseParser.parse(request.toHTTPRequest().send())
-
-        if (!tokenResponse.indicatesSuccess()) {
-            // We got an error response...
-            val errorResponse: TokenErrorResponse = tokenResponse.toErrorResponse()
-
-            throw AuthenticationException("Could not exchange code for token " + errorResponse.toString())
+        if (!response.indicatesSuccess()) {
+            throw AuthenticationException("Could not exchange code for token");
         }
 
-        val successResponse = tokenResponse.toSuccessResponse() as OIDCTokenResponse
+        val successResponse = response.toSuccessResponse() as OIDCTokenResponse
 
-        // Get the access token and refresh token
+        // get the access token and refresh token
         val accessToken = successResponse.oidcTokens.accessToken
         val refreshToken = successResponse.oidcTokens.refreshToken
 
         // verify token authenticity and validity
-        authenticationService.parseAndVerifyAccessToken(accessToken)
+        verificationService.parseAndVerifyAccessToken(accessToken)
 
         session.setAttribute(SessionKeys.ACCESS_TOKEN_KEY, accessToken)
         session.setAttribute(SessionKeys.REFRESH_TOKEN_KEY, refreshToken)
 
-        val redirectUri = URI.create(clientRedirectUrl ?: frontendUrl)
+        // use the login page URL if no explicit redirect URL was passed
+        val redirectUri = URI.create(clientRedirectUrl ?: loginPageUrl)
 
         val headers = HttpHeaders().apply {
             location = redirectUri

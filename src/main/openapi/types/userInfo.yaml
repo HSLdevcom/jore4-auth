@@ -1,7 +1,7 @@
 openapi: "3.0.0"
 
 definitions:
-  account:
+  userInfo:
     description: >
       Contains information about the currently logged in user.
     type: object

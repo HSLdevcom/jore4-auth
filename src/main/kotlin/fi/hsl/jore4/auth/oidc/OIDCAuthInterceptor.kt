@@ -12,11 +12,17 @@ import org.springframework.web.context.request.ServletRequestAttributes
 import java.io.IOException
 import java.lang.Exception
 
-
 @Component
 class OIDCAuthInterceptor(
-    private val authenticationService: AccessTokenAuthenticationService
+    private val verificationService: TokenVerificationService
 ) : Interceptor {
+
+    companion object {
+        private val LOGGER = LoggerFactory.getLogger(OIDCAuthInterceptor::class.java)
+
+        private const val AUTHORIZATION_HEADER = "Authorization"
+        private const val AUTHORIZATION_BEARER_PREFIX = "Bearer "
+    }
 
     @Throws(IOException::class)
     override fun intercept(chain: Interceptor.Chain): Response {
@@ -27,8 +33,8 @@ class OIDCAuthInterceptor(
             val response = proceedWithAccessToken(chain, accessToken)
             return if (response.code() == HttpStatus.UNAUTHORIZED.value()) {
                 try {
-                    // In case of a 401, let's check if our token has expired and refresh if needed.
-                    val updatedAccessToken = authenticationService.verifyOrRefreshTokens(session)
+                    // in case of a 401, let's check if our token has expired and refresh if needed.
+                    val updatedAccessToken = verificationService.verifyOrRefreshTokens(session)
                     if (updatedAccessToken != null) {
                         response.close()
                         // retry with the new access token
@@ -40,7 +46,7 @@ class OIDCAuthInterceptor(
                 }
             } else response
         } else {
-            LOGGER.debug("Could not resolve access token.")
+            LOGGER.debug("Could not resolve access token, sending request without authorization header")
             chain.proceed(chain.request())
         }
     }
@@ -49,11 +55,4 @@ class OIDCAuthInterceptor(
             chain.proceed(chain.request().newBuilder()
                     .addHeader(AUTHORIZATION_HEADER, "$AUTHORIZATION_BEARER_PREFIX$accessToken")
                     .build())
-
-    companion object {
-        private val LOGGER = LoggerFactory.getLogger(OIDCAuthInterceptor::class.java)
-
-        private const val AUTHORIZATION_HEADER = "Authorization"
-        private const val AUTHORIZATION_BEARER_PREFIX = "Bearer "
-    }
 }

@@ -69,7 +69,7 @@ open class CommonErrorHandler {
     @ExceptionHandler(ConstraintViolationException::class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     fun processConstraintViolationException(ex: ConstraintViolationException) {
-        // This could potentially be output by openapi-generator in the future - the corresponding code already is by the o-g Kotlin generator
+        // this could potentially be output by openapi-generator in the future
         LOGGER.error("Constraint violation", ex)
     }
 }

@@ -4,6 +4,9 @@ import org.springframework.context.annotation.Configuration
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer
 
+/**
+ * Web MVC config to allow downloading the Swagger API specs.
+ */
 @Configuration
 open class WebMvcConfig : WebMvcConfigurer {
 
