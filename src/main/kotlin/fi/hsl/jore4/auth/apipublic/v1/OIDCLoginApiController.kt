@@ -18,10 +18,11 @@ import fi.hsl.jore4.auth.oidc.OIDCProviderMetadataSupplier
 import fi.hsl.jore4.auth.web.UnauthorizedException
 
 @RestController
-@RequestMapping("\${api.prefix.internal}/public/v1.0")
+@RequestMapping("\${api.path.prefix}/public/v1.0")
 open class OIDCLoginApiController(
         private val oidcProperties: OIDCProperties,
         private val oidcProviderMetadataSupplier: OIDCProviderMetadataSupplier,
+        private val oidcExchangeApiController: OIDCExchangeApiController,
         private val request: HttpServletRequest
 ) : LoginApi {
 
@@ -34,7 +35,7 @@ open class OIDCLoginApiController(
 
     override fun login(clientRedirectUrl: String?, locale: String?): ResponseEntity<Void> {
         // create the exchange endpoint callback URI, to which the user will be redirected after authentication
-        val callback = OIDCExchangeApiController.createCallbackUri(oidcProperties.clientBaseUrl, clientRedirectUrl)
+        val callbackUri = oidcExchangeApiController.createCallbackUri(clientRedirectUrl)
 
         // generate a random state to verify the callback request
         val state = State()
@@ -44,7 +45,7 @@ open class OIDCLoginApiController(
             ResponseType(OIDC_RESPONSE_TYPE),
             Scope(*OIDC_SCOPES),
             ClientID(oidcProperties.clientId),
-            callback
+            callbackUri
         )
             .endpointURI(oidcProviderMetadataSupplier.providerMetadata.authorizationEndpointURI)
             .state(state)

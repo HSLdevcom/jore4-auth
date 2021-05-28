@@ -7,9 +7,6 @@ import org.springframework.context.annotation.Configuration
 @ConfigurationProperties("oidc")
 open class OIDCProperties {
     lateinit var clientId: String
-
     lateinit var clientSecret: String
-
     lateinit var serverBaseUrl: String
-    lateinit var clientBaseUrl: String
 }

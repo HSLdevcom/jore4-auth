@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.RestController
  * Provide access to user info data.
  */
 @RestController
-@RequestMapping("\${api.prefix.internal}/public/v1.0")
+@RequestMapping("\${api.path.prefix}/public/v1.0")
 open class UserInfoApiController(
     private val userInfoService: UserInfoService
 ) : UserInfoApi {

@@ -18,42 +18,18 @@ import javax.servlet.http.HttpSession
 
 /**
  * OIDC exchange endpoint controller.
+ *
+ * Provides the endpoint for exchanging an OIDC authorization code for tokens.
  */
 @RestController
 class OIDCExchangeApiController(
     private val exchangeService: OIDCExchangeService,
-    @Value("\${api.prefix.public}") private val publicApiPrefixInit: String
+    @Value("\${self.base.url}") private val selfBaseUrl: String,
+    @Value("\${api.path.prefix.public}") private val publicApiPrefix: String
 ) {
     companion object {
         const val EXCHANGE_ENDPOINT_PATH_SUFFIX = "/v1.0/oidc/exchange"
         const val CLIENT_REDIRECT_URL_QUERY_PARAM = "clientRedirectUrl"
-
-        private lateinit var publicApiPrefix: String
-
-        /**
-         * Create a callback URI pointing to the given {@param clientBaseUrl} with the {@param clientRedirectUrl}
-         * added as a query parameter.
-         *
-         * This URI will allow us to return the user to any place, since the client base URL matches the OIDC client
-         * URL and will redirect the user to the real destination.
-         */
-        fun createCallbackUri(clientBaseUrl: String, clientRedirectUrl: String?): URI {
-            var builder = UriComponentsBuilder
-                .fromUriString(clientBaseUrl)
-                .path("$publicApiPrefix$EXCHANGE_ENDPOINT_PATH_SUFFIX")
-
-            if (clientRedirectUrl != null) {
-                builder = builder.queryParam(CLIENT_REDIRECT_URL_QUERY_PARAM, URLEncoder.encode(clientRedirectUrl, "UTF-8"))
-            }
-
-            return builder.build()
-                .encode()
-                .toUri()
-        }
-    }
-
-    init {
-        publicApiPrefix = publicApiPrefixInit
     }
 
     @ApiOperation(
@@ -66,7 +42,7 @@ class OIDCExchangeApiController(
             ApiResponse(code = 401, message = "The authenticity of the request cannot be verified.")
     )
     @ResponseStatus(HttpStatus.FOUND)
-    @RequestMapping(method = [RequestMethod.GET], value = ["\${api.prefix.internal}$EXCHANGE_ENDPOINT_PATH_SUFFIX"])
+    @RequestMapping(method = [RequestMethod.GET], value = ["\${api.path.prefix}$EXCHANGE_ENDPOINT_PATH_SUFFIX"])
     fun exchangeTokens(
             @ApiParam("The authorization code passed on by the authorization server.")
             @RequestParam
@@ -77,6 +53,30 @@ class OIDCExchangeApiController(
             @RequestParam(value = CLIENT_REDIRECT_URL_QUERY_PARAM, required = false) clientRedirectUrl: String?,
             session: HttpSession
     ): ResponseEntity<Any> {
-        return exchangeService.exchangeTokens(AuthorizationCode(code), State(state), session, clientRedirectUrl)
+        return exchangeService.exchangeTokens(
+            AuthorizationCode(code), State(state), session,
+            createCallbackUri(clientRedirectUrl), clientRedirectUrl
+        )
+    }
+
+    /**
+     * Create a callback URI pointing to our base URL with the {@param clientRedirectUrl}
+     * added as a query parameter.
+     *
+     * This URI will allow us to return the user to any place, since the client base URL matches the OIDC client
+     * URL and will redirect the user to the real destination.
+     */
+    fun createCallbackUri(clientRedirectUrl: String?): URI {
+        var builder = UriComponentsBuilder
+            .fromUriString(selfBaseUrl)
+            .path("$publicApiPrefix$EXCHANGE_ENDPOINT_PATH_SUFFIX")
+
+        if (clientRedirectUrl != null) {
+            builder = builder.queryParam(CLIENT_REDIRECT_URL_QUERY_PARAM, URLEncoder.encode(clientRedirectUrl, "UTF-8"))
+        }
+
+        return builder.build()
+            .encode()
+            .toUri()
     }
 }

@@ -13,7 +13,7 @@ import org.springframework.web.util.UriComponentsBuilder.fromUri
 import javax.servlet.http.HttpServletRequest
 
 @RestController
-@RequestMapping("\${api.prefix.internal}/public/v1.0")
+@RequestMapping("\${api.path.prefix}/public/v1.0")
 open class OIDCLogoutApiController(
         private val oidcProperties: OIDCProperties,
         private val oidcProviderMetadataSupplier: OIDCProviderMetadataSupplier,
