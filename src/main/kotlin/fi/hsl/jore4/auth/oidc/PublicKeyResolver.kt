@@ -12,9 +12,8 @@ import java.security.Key
 import java.security.KeyException
 
 /**
- * This component resolves the public key that is used to verify
- * the JWT tokens issued by HSLID and provides the resolved key
- * to the used JWT parser.
+ * Resolves the public key that is used to verify the JWT tokens issued by the OIDC server and provides
+ * the key to the used JWT parser.
  */
 @Component
 open class PublicKeyResolver(
@@ -36,6 +35,13 @@ open class PublicKeyResolver(
         return getPublicKey(header)
     }
 
+    /**
+     * Resolve the public key that is referenced in the given JWS {@header}.
+     *
+     * If the key cannot be found, refresh the key set from the OIDC provider and retries the key lookup.
+     *
+     * Note that only RSA keys are currently supported.
+     */
     private fun getPublicKey(header: JwsHeader<out JwsHeader<*>>): Key {
         val keyId = header[JwsHeader.KEY_ID] as String? ?: throw KeyException("Could not find key id")
 

@@ -17,13 +17,16 @@ import com.nimbusds.oauth2.sdk.id.*
 import fi.hsl.jore4.auth.oidc.OIDCProviderMetadataSupplier
 import fi.hsl.jore4.auth.web.UnauthorizedException
 
+/**
+ * Endpoint to log the user in.
+ */
 @RestController
 @RequestMapping("\${api.path.prefix}/public/v1.0")
 open class OIDCLoginApiController(
-        private val oidcProperties: OIDCProperties,
-        private val oidcProviderMetadataSupplier: OIDCProviderMetadataSupplier,
-        private val oidcExchangeApiController: OIDCExchangeApiController,
-        private val request: HttpServletRequest
+    private val oidcProperties: OIDCProperties,
+    private val oidcProviderMetadataSupplier: OIDCProviderMetadataSupplier,
+    private val oidcTokenExchangeApiController: OIDCTokenExchangeApiController,
+    private val request: HttpServletRequest
 ) : LoginApi {
 
     companion object {
@@ -33,9 +36,12 @@ open class OIDCLoginApiController(
         private val OIDC_SCOPES = arrayOf("openid", "profile", "externalpermissions.query")
     }
 
+    /**
+     * Log the user in by redirecting her to the OIDC authorization endpoint.
+     */
     override fun login(clientRedirectUrl: String?, locale: String?): ResponseEntity<Void> {
         // create the exchange endpoint callback URI, to which the user will be redirected after authentication
-        val callbackUri = oidcExchangeApiController.createCallbackUri(clientRedirectUrl)
+        val callbackUri = oidcTokenExchangeApiController.createCallbackUri(clientRedirectUrl)
 
         // generate a random state to verify the callback request
         val state = State()

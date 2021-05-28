@@ -18,17 +18,30 @@ import java.net.URI
 import javax.naming.AuthenticationException
 import javax.servlet.http.HttpSession
 
+/**
+ * Provides the functionality for exchanging an OIDC authorization code for tokens.
+ */
 @Service
-open class OIDCExchangeService(
+open class OIDCTokenExchangeService(
     private val oidcProperties: OIDCProperties,
     private val oidcProviderMetadataSupplier: OIDCProviderMetadataSupplier,
     private val verificationService: TokenVerificationService,
     @Value("\${loginpage.url}") private val loginPageUrl: String
 ) {
     companion object {
-        private val LOGGER: Logger = LoggerFactory.getLogger(OIDCExchangeService::class.java)
+        private val LOGGER: Logger = LoggerFactory.getLogger(OIDCTokenExchangeService::class.java)
     }
 
+    /**
+     * Exchange the given authorization {@param code} for an access and refresh token.
+     *
+     * Before the code exchange takes place, the given {@param state} is verified using the session
+     * data.
+     *
+     * After an successful exchange, the access is verified and both the access and refresh tokens
+     * are stored in the user's session. The function then returns a redirect response entity to the
+     * {@param clientRedirectUrl} or the configured login page URL, if no redirect URl is passed.
+     */
     open fun exchangeTokens(code: AuthorizationCode, state: State, session: HttpSession,
                             callbackUri: URI, clientRedirectUrl: String?
     ): ResponseEntity<Any> {
@@ -45,7 +58,7 @@ open class OIDCExchangeService(
         val response = OIDCTokenResponseParser.parse(request.toHTTPRequest().send())
 
         if (!response.indicatesSuccess()) {
-            throw AuthenticationException("Could not exchange code for token");
+            throw AuthenticationException("Could not exchange code for token")
         }
 
         val successResponse = response.toSuccessResponse() as OIDCTokenResponse
@@ -72,9 +85,14 @@ open class OIDCExchangeService(
         return ResponseEntity(headers, HttpStatus.FOUND)
     }
 
+    /**
+     * Verify the given {@param state} by comparing it to the state saved in the {@param session}.
+     */
     private fun verifyState(state: State, session: HttpSession) {
         if (state != session.getAttribute(SessionKeys.OIDC_STATE_KEY)) {
             throw AuthenticationException("Invalid OIDC state, did you change the browser while logging in?")
         }
+
+        session.removeAttribute(SessionKeys.OIDC_STATE_KEY)
     }
 }

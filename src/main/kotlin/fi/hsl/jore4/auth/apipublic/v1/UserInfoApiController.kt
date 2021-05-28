@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
 
 /**
- * Provide access to user info data.
+ * Provides access to user info data.
  */
 @RestController
 @RequestMapping("\${api.path.prefix}/public/v1.0")
@@ -20,6 +20,9 @@ open class UserInfoApiController(
         val LOGGER: Logger = LoggerFactory.getLogger(UserInfoApiController::class.java)
     }
 
+    /**
+     * Retrieve the currently logged in user's user info.
+     */
     override fun getUserInfo(): ResponseEntity<Map<String, Any>> {
         LOGGER.info("Fetching user info of currently logged in user")
 

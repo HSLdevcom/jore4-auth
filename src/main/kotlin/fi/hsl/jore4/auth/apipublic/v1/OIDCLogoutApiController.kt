@@ -12,6 +12,9 @@ import org.springframework.web.bind.annotation.RestController
 import org.springframework.web.util.UriComponentsBuilder.fromUri
 import javax.servlet.http.HttpServletRequest
 
+/**
+ * Endpoint to log the user out.
+ */
 @RestController
 @RequestMapping("\${api.path.prefix}/public/v1.0")
 open class OIDCLogoutApiController(
@@ -22,9 +25,14 @@ open class OIDCLogoutApiController(
 ) : LogoutApi {
 
     companion object {
-        private val LOG: Logger = LoggerFactory.getLogger(OIDCLogoutApiController::class.java)
+        private val LOGGER: Logger = LoggerFactory.getLogger(OIDCLogoutApiController::class.java)
     }
 
+    /**
+     * Log the user out by redirecting her to the OIDC end session endpoint.
+     *
+     * Our own session data is cleared before that.
+     */
     override fun logout(): ResponseEntity<Void> {
         val logoutUri = fromUri(oidcProviderMetadataSupplier.providerMetadata.endSessionEndpointURI)
             .queryParam("client_id", oidcProperties.clientId)
@@ -33,7 +41,7 @@ open class OIDCLogoutApiController(
             .encode()
             .toUri()
 
-        LOG.info("Redirecting to OIDC logout: {}", logoutUri)
+        LOGGER.info("Redirecting to OIDC logout: {}", logoutUri)
 
         request.session?.invalidate()
 

@@ -6,9 +6,12 @@ import com.nimbusds.oauth2.sdk.id.Issuer
 import com.nimbusds.openid.connect.sdk.op.*
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
-import org.springframework.stereotype.Service
+import org.springframework.stereotype.Component
 
-@Service
+/**
+ * Updates the OIDC provider metadata on context refresh events and provides it to other components.
+ */
+@Component
 open class OIDCProviderMetadataSupplier(
     private val oidcProperties: OIDCProperties
 ) {
@@ -20,6 +23,13 @@ open class OIDCProviderMetadataSupplier(
     lateinit var providerMetadata: OIDCProviderMetadata
         private set
 
+    /**
+     * Update the OIDC provider metadata on context refresh events.
+     *
+     * This will also update the metadata on application start.
+     *
+     * The metadata is downloaded from the OIDC discovery endpoint.
+     */
     @EventListener(ContextRefreshedEvent::class)
     fun updateProviderMetadata() {
         LOGGER.info("Updating OIDC provider metadata...")
@@ -27,7 +37,7 @@ open class OIDCProviderMetadataSupplier(
         // the OpenID provider issuer URL
         val issuer = Issuer(oidcProperties.serverBaseUrl)
 
-        // resolve the OpenID provider metadata
+        // fetch the OpenID provider metadata from the discovery endpoint
         val request = OIDCProviderConfigurationRequest(issuer)
         val response = request.toHTTPRequest().send()
 

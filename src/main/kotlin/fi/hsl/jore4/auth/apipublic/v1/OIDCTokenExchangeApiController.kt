@@ -2,7 +2,7 @@ package fi.hsl.jore4.auth.apipublic.v1
 
 import com.nimbusds.oauth2.sdk.AuthorizationCode
 import com.nimbusds.oauth2.sdk.id.State
-import fi.hsl.jore4.auth.oidc.OIDCExchangeService
+import fi.hsl.jore4.auth.oidc.OIDCTokenExchangeService
 import io.swagger.annotations.ApiOperation
 import io.swagger.annotations.ApiParam
 import io.swagger.annotations.ApiResponse
@@ -17,13 +17,13 @@ import java.net.URLEncoder
 import javax.servlet.http.HttpSession
 
 /**
- * OIDC exchange endpoint controller.
+ * OIDC token exchange endpoint controller.
  *
  * Provides the endpoint for exchanging an OIDC authorization code for tokens.
  */
 @RestController
-class OIDCExchangeApiController(
-    private val exchangeService: OIDCExchangeService,
+class OIDCTokenExchangeApiController(
+    private val tokenExchangeService: OIDCTokenExchangeService,
     @Value("\${self.base.url}") private val selfBaseUrl: String,
     @Value("\${api.path.prefix.public}") private val publicApiPrefix: String
 ) {
@@ -35,10 +35,10 @@ class OIDCExchangeApiController(
     @ApiOperation(
             "This endpoint is invoked by the OIDC authorization server and will exchange the given authorization code for an " +
                     "access and a refresh token. After a successful code exchange, this endpoint will eventually redirect to the " +
-                    "configured frontend page."
+                    "configured login page."
     )
     @ApiResponses(
-            ApiResponse(code = 302, message = "Redirects to our profile page."),
+            ApiResponse(code = 302, message = "Redirects to the configured login page."),
             ApiResponse(code = 401, message = "The authenticity of the request cannot be verified.")
     )
     @ResponseStatus(HttpStatus.FOUND)
@@ -53,7 +53,7 @@ class OIDCExchangeApiController(
             @RequestParam(value = CLIENT_REDIRECT_URL_QUERY_PARAM, required = false) clientRedirectUrl: String?,
             session: HttpSession
     ): ResponseEntity<Any> {
-        return exchangeService.exchangeTokens(
+        return tokenExchangeService.exchangeTokens(
             AuthorizationCode(code), State(state), session,
             createCallbackUri(clientRedirectUrl), clientRedirectUrl
         )

@@ -17,6 +17,9 @@ import org.springframework.stereotype.Service
 import javax.naming.AuthenticationException
 import javax.servlet.http.HttpSession
 
+/**
+ * Parses, verifies, and refreshes access tokens.
+ */
 @Service
 open class TokenVerificationService(
         private val publicKeyResolver: PublicKeyResolver,
@@ -27,6 +30,12 @@ open class TokenVerificationService(
         private val LOGGER = LoggerFactory.getLogger(TokenVerificationService::class.java)
     }
 
+    /**
+     * Verify the access token found in the given {@param session}.
+     *
+     * In case it has expired, refresh the access (and potentially refresh) token, store them in the {@param session}
+     * and return the updated access token.
+     */
     open fun verifyOrRefreshTokens(session: HttpSession): AccessToken? {
         try {
             val accessToken = (session.getAttribute(ACCESS_TOKEN_KEY)
@@ -46,30 +55,47 @@ open class TokenVerificationService(
         return null
     }
 
+    /**
+     * Verify the {@param accessToken} and parses its claims.
+     *
+     * The issuer audience is also verified (must match our OIDC client ID).
+     *
+     * An {@exception UnauthorizedException} is thrown in case of an invalid token, _except_ if the token
+     * has expired. In this case, the caught {@exception ExpiredJwtException} is re-thrown.
+     */
     open fun parseAndVerifyAccessToken(accessToken: AccessToken): Jws<Claims> {
         try {
             return Jwts.parser()
                 .setSigningKeyResolver(publicKeyResolver)
                 .requireAudience(oidcProperties.clientId)
                 .parseClaimsJws(accessToken.toString())
-        } catch (e: UnsupportedJwtException) {
-            LOGGER.warn("Authorization attempt with malformed JWT token.", e)
+        } catch (ex: UnsupportedJwtException) {
+            LOGGER.warn("Authorization attempt with malformed JWT token.", ex)
             throw UnauthorizedException("Invalid JWT")
-        } catch (e: MalformedJwtException) {
-            LOGGER.warn("Authorization attempt with malformed JWT token.", e)
+        } catch (ex: MalformedJwtException) {
+            LOGGER.warn("Authorization attempt with malformed JWT token.", ex)
             throw UnauthorizedException("Invalid JWT")
-        } catch (e: SignatureException) {
-            LOGGER.warn("Authorization attempt with malformed JWT token.", e)
+        } catch (ex: SignatureException) {
+            LOGGER.warn("Authorization attempt with malformed JWT token.", ex)
             throw UnauthorizedException("Invalid JWT")
-        } catch (e: IllegalArgumentException) {
-            LOGGER.warn("Authorization attempt with malformed JWT token.", e)
+        } catch (ex: ExpiredJwtException) {
+            LOGGER.warn("Authorization attempt with malformed JWT token.", ex)
+            // re-throw on purpose to allow caller to react on it
+            throw ex
+        } catch (ex: IllegalArgumentException) {
+            LOGGER.warn("Authorization attempt with malformed JWT token.", ex)
             throw UnauthorizedException("Invalid JWT")
-        } catch (e: RuntimeException) {
-            LOGGER.warn("Exception decoding JWT token.", e)
+        } catch (ex: RuntimeException) {
+            LOGGER.warn("Exception decoding JWT token.", ex)
             throw UnauthorizedException("Unknown JWT exception")
         }
     }
 
+    /**
+     * Refresh the access and refresh tokens found in the {@param session}.
+     *
+     * The updated tokens are again stored in the {@param session} and the new access token is returned.
+     */
     private fun refreshTokens(session: HttpSession): AccessToken {
         val refreshToken = (session.getAttribute(REFRESH_TOKEN_KEY)
             ?: throw UnauthorizedException("No refresh token found in session, cannot refresh access token"))
