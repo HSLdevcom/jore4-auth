@@ -27,8 +27,8 @@ open class OIDCLoginService(
     companion object {
         private val LOGGER: Logger = LoggerFactory.getLogger(OIDCLoginService::class.java)
 
-        private const val OIDC_RESPONSE_TYPE = "code"
-        private val OIDC_SCOPES = arrayOf("openid", "profile", "externalpermissions.query")
+        const val OIDC_RESPONSE_TYPE = "code"
+        val OIDC_SCOPES = arrayOf("openid", "profile", "externalpermissions.query")
     }
 
     /**

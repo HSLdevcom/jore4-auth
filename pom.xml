@@ -21,6 +21,10 @@
 
         <build.profile.id>dev</build.profile.id>
         <project.config.file>profiles/${build.profile.id}/config.properties</project.config.file>
+
+        <!-- Only unit tests are run by default. -->
+        <skip.integration.tests>true</skip.integration.tests>
+        <skip.unit.tests>false</skip.unit.tests>
     </properties>
 
     <profiles>
@@ -42,6 +46,28 @@
             <id>prod</id>
             <properties>
                 <build.profile.id>prod</build.profile.id>
+            </properties>
+        </profile>
+        <profile>
+            <id>integration-test</id>
+            <properties>
+                <build.profile.id>integration-test</build.profile.id>
+                <skip.integration.tests>false</skip.integration.tests>
+                <skip.unit.tests>true</skip.unit.tests>
+            </properties>
+        </profile>
+        <profile>
+            <id>all-tests</id>
+            <properties>
+                <build.profile.id>integration-test</build.profile.id>
+                <skip.integration.tests>true</skip.integration.tests>
+                <skip.unit.tests>true</skip.unit.tests>
+            </properties>
+        </profile>
+        <profile>
+            <id>skip-tests</id>
+            <properties>
+                <skip.unit.tests>true</skip.unit.tests>
             </properties>
         </profile>
     </profiles>
@@ -124,7 +150,49 @@
                             </sourceDirs>
                         </configuration>
                     </execution>
+                    <execution>
+                        <id>test-compile</id>
+                        <goals>
+                            <goal>test-compile</goal>
+                        </goals>
+                        <configuration>
+                            <sourceDirs>
+                                <sourceDir>${project.basedir}/src/test/kotlin</sourceDir>
+                                <sourceDir>${project.basedir}/src/integration-test/kotlin</sourceDir>
+                            </sourceDirs>
+                        </configuration>
+                    </execution>
                 </executions>
+            </plugin>
+
+            <!-- plugins for testing -->
+            <plugin>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <groupId>org.apache.maven.plugins</groupId>
+                <configuration>
+                    <groups>unitTest</groups>
+                    <includes>
+                        <include>**/*Test</include>
+                        <include>**/*Tests</include>
+                    </includes>
+                    <skipTests>${skip.unit.tests}</skipTests>
+                </configuration>
+            </plugin>
+            <plugin>
+                <artifactId>maven-failsafe-plugin</artifactId>
+                <groupId>org.apache.maven.plugins</groupId>
+                <configuration>
+                    <argLine>-Xmx1024m -XX:MaxPermSize=256m</argLine>
+                    <disableXmlReport>false</disableXmlReport>
+                    <groups>integrationTest</groups>
+                    <includes>
+                        <include>**/*Test</include>
+                        <include>**/*Tests</include>
+                    </includes>
+                    <reportsDirectory>${project.build.directory}/failsafe-reports</reportsDirectory>
+                    <redirectTestOutputToFile>true</redirectTestOutputToFile>
+                    <skipTests>${skip.integration.tests}</skipTests>
+                </configuration>
             </plugin>
         </plugins>
     </build>
@@ -165,6 +233,19 @@
         <dependency>
             <groupId>javax.validation</groupId>
             <artifactId>validation-api</artifactId>
+        </dependency>
+
+        <!-- dependencies for testing -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-test</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.github.tomakehurst</groupId>
+            <artifactId>wiremock</artifactId>
+            <version>2.27.2</version>
+            <scope>test</scope>
         </dependency>
     </dependencies>
 </project>
