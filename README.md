@@ -1,4 +1,5 @@
 # jore4-auth
+
 Jore4 authentication and authorization backend. The backend uses a configured OpenID Connect provider to authenticate
 and authorize the user via the OIDC Authorization Code Flow.
 
@@ -6,24 +7,20 @@ For more information on OpenID Connect, please see
 [the OIDC specs](https://openid.net/specs/openid-connect-core-1_0.html), especially the
 [section on the Authorization Code Flow](https://openid.net/specs/openid-connect-core-1_0.html#CodeFlowAuth).
 
-
 ## How to run locally
 
+1. Install preliminaries
+    - OpenJDK 11
 1. Make a copy of the maven `dev`-profile for your user:
     ```
     cp profiles/dev/config.properties profiles/dev/config.<my-username>.properties
     ```
-
-
-2. Adjust the properties in `profiles/dev/config.<my-username>.properties` to your needs. By default, the backend
+1. Adjust the properties in `profiles/dev/config.<my-username>.properties` to your needs. By default, the backend
    will listen at port 3001 and expect its API path (`/api`) to be visible to the world at `/api/auth`.
-
-
-3. Build and run:
+1. Build and run:
     ```
     mvn clean spring-boot:run -Pdev
     ```
-
 
 ## Building for deployment
 
@@ -32,7 +29,6 @@ build to be used for deployment, compile and create a package using the `prod` p
 ```
 mvn clean package -Pprod
 ```
-
 
 ## Functionality
 
@@ -62,7 +58,6 @@ the Jore4 auth backend and redirect her to the "end session" endpoint of the OID
 ![logout flow](https://github.com/HSLdevcom/jore4/blob/main/wiki/images/auth-logout.png?raw=true)
 *The logout flow, also see the
 [diagram source](https://github.com/HSLdevcom/jore4/blob/main/wiki/images/auth-logout.puml)*
-
 
 ## Implementation details
 
