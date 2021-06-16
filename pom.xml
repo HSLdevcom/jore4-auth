@@ -21,6 +21,7 @@
 
         <build.profile.id>dev</build.profile.id>
         <project.config.file>profiles/${build.profile.id}/config.properties</project.config.file>
+        <start.class>fi.hsl.jore4.auth.Jore4AuthApplicationKt</start.class>
     </properties>
 
     <profiles>
@@ -149,6 +150,21 @@
                                 </requireJavaVersion>
                             </rules>
                         </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-maven-plugin</artifactId>
+                <configuration>
+                    <fork>true</fork>
+                    <mainClass>${start.class}</mainClass>
+                </configuration>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>repackage</goal>
+                        </goals>
                     </execution>
                 </executions>
             </plugin>

@@ -27,7 +27,7 @@ For more information on OpenID Connect, please see
 Note that the above mentioned `dev` profile is only meant for use in your local development environment. To create a
 build to be used for deployment, compile and create a package using the `prod` profile:
 ```
-mvn clean package -Pprod
+mvn clean package spring-boot:repackage -Pprod
 ```
 
 ## Functionality
