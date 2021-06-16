@@ -1,0 +1,8 @@
+# Deny everything.
+**
+
+# Reenable some...
+!/src
+!/profiles
+!/pom.xml
+!/read-secrets.sh
