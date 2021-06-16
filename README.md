@@ -21,6 +21,16 @@ For more information on OpenID Connect, please see
     ```
     mvn clean spring-boot:run -Pdev
     ```
+   
+## How to run with docker-compose
+
+```
+docker-compose up --build
+
+```
+
+Runs frontend and auth backend through nginx proxy that maps UI to localhost:3301/ and auth backend to localhost:3301/api/auth
+Frontend directly accessible through localhost:3302 and auth backend through localhost:3200
 
 ## Building for deployment
 
@@ -66,3 +76,27 @@ The backend is implemented as a spring boot application.
 The public endpoint interfaces are generated from the OpenAPI specifications in the directory `src/main/openapi`. The
 specifications are provided for download from the running application under the `/api-specs/openapi` path, the root
 document being `/api-specs/openapi/api.yaml`.
+
+## Docker reference
+
+The application uses spring boot which allows overwriting configuration properties as described
+[here](https://docs.spring.io/spring-boot/docs/current/reference/html/features.html#features.external-config.typesafe-configuration-properties.relaxed-binding.environment-variables).
+The docker container is also able to
+[read secrets](https://github.com/HSLdevcom/jore4-tools#read-secretssh) and expose
+them as environment variables.
+
+The following configuration properties are to be defined for each environment:
+
+| Config property        | Environment variable   | Secret name            | Example                 | Description                                  |
+| ---------------------- | ---------------------- | ---------------------- | ----------------------- | -------------------------------------------- |
+| -                      | SECRET_STORE_BASE_PATH | -                      | /run/secrets            | Directory containing the docker secrets      |
+| self.public.base.url   | SELF_PUBLIC_BASE_URL   | self-public-base-url   | https://jore.hsl.fi     | Jore4 auth base URL as the world sees it     |
+| loginpage.url          | LOGINPAGE_URL          | loginpage-url          | https://jore.hsl.fi     | The full URL to which to return after login  |
+| logoutpage.url         | LOGOUTPAGE_URL         | logoutpage-url         | https://jore.hsl.fi     | The full URL to which to return after logout |
+| oidc.provider.base.url | OIDC_PROVIDER_BASE_URL | oidc-provider-base-url | https://id.hsl.fi       | The base URL of the OIDC provider            |
+| oidc.client.id         | OIDC_CLIENT_ID         | oidc-client-id         | ***                     | The client id from the OIDC provider         |
+| oidc.client.secret     | OIDC_CLIENT_SECRET     | oidc-client-secret     | ***                     | The client secret from the OIDC provider     |
+| api.path.prefix        | API_PATH_PREFIX        | api-path-prefix        | /api                    | Base URL of the API within the container     |
+| api.path.prefix.public | API_PATH_PREFIX_PUBLIC | api-path-prefix-public | /api/auth               | Exposed base URL for API (e.g. from browser) |
+
+More properties can be found from `/profiles/prod/config.properties`
