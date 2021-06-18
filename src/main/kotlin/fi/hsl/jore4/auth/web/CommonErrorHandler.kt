@@ -7,6 +7,7 @@ import org.springframework.http.HttpStatus
 import org.springframework.web.bind.annotation.ControllerAdvice
 import org.springframework.web.bind.annotation.ExceptionHandler
 import org.springframework.web.bind.annotation.ResponseStatus
+import javax.naming.AuthenticationException
 import javax.validation.ConstraintViolationException
 
 /**
@@ -41,6 +42,12 @@ open class CommonErrorHandler {
     @ResponseStatus(HttpStatus.UNAUTHORIZED)
     fun processUnauthorizedException(ex: ExpiredJwtException) {
         LOGGER.error("Expired JWT exception", ex)
+    }
+
+    @ExceptionHandler(AuthenticationException::class)
+    @ResponseStatus(HttpStatus.UNAUTHORIZED)
+    fun processAuthenticationException(ex: AuthenticationException) {
+        LOGGER.error("Authentication exception", ex)
     }
 
     @ExceptionHandler(ConstraintViolationException::class)
