@@ -18,7 +18,7 @@ import javax.naming.AuthenticationException
  */
 class UserTokenSet(
     accessToken: AccessToken,
-    private var refreshToken: RefreshToken
+    refreshToken: RefreshToken
 ) : Serializable {
 
     companion object {
@@ -26,6 +26,8 @@ class UserTokenSet(
     }
 
     var accessToken: AccessToken = accessToken
+        private set
+    var refreshToken: RefreshToken = refreshToken
         private set
 
     /**
