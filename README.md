@@ -100,3 +100,20 @@ The following configuration properties are to be defined for each environment:
 | api.path.prefix.public | API_PATH_PREFIX_PUBLIC | api-path-prefix-public | /api/auth               | Exposed base URL for API (e.g. from browser) |
 
 More properties can be found from `/profiles/prod/config.properties`
+
+## Tests
+
+The tests for the auth backend can be run using the command
+```
+mvn clean verify -Pall-tests
+```
+
+Alternatively, you can run only the integration tests using the command
+```
+mvn clean verify -Pintegration-test
+```
+
+Note that currently there are no unit tests yet.
+
+Beware that the source needs to be compiled again every time the profile is switched, i.e. between running the tests
+and the application.
