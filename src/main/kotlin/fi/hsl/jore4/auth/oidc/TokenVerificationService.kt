@@ -81,7 +81,7 @@ open class TokenVerificationService(
         } catch (ex: IllegalArgumentException) {
             LOGGER.warn("Authorization attempt with JWT token as an illegal argument.", ex)
             throw UnauthorizedException("Authorization attempt with JWT token as an illegal argument")
-        } catch (ex: RuntimeException) {
+        } catch (ex: Exception) {
             LOGGER.warn("Exception decoding JWT token.", ex)
             throw UnauthorizedException("Unknown JWT exception")
         }
