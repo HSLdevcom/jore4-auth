@@ -78,7 +78,7 @@ open class OIDCCodeExchangeService(
 
         session.setAttribute(SessionKeys.USER_TOKEN_SET_KEY, UserTokenSet(accessToken, refreshToken))
 
-        // use the login page URL if no explicit redirect URL was passed
+        // redirect the user to the login page URL
         val redirectUri = URI.create(loginPageUrl)
 
         LOGGER.debug("Created redirect URI: {}", redirectUri)
