@@ -71,3 +71,21 @@ The backend is implemented as a spring boot application.
 The public endpoint interfaces are generated from the OpenAPI specifications in the directory `src/main/openapi`. The
 specifications are provided for download from the running application under the `/api-specs/openapi` path, the root
 document being `/api-specs/openapi/api.yaml`.
+
+
+## Tests
+
+The tests for the auth backend can be run using the command
+```
+mvn clean verify -Pall-tests
+```
+
+Alternatively, you can run only the integration tests using the command
+```
+mvn clean verify -Pintegration-test
+```
+
+Note that currently there are no unit tests yet.
+
+Beware that the source needs to be compiled again every time the profile is switched, i.e. between running the tests
+and the application.
