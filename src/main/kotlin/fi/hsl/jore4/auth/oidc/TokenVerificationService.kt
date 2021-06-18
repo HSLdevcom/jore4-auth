@@ -29,6 +29,7 @@ open class TokenVerificationService(
 
     private val jwtsParser = Jwts.parser()
         .setSigningKeyResolver(publicKeyResolver)
+        .requireIssuer(oidcProperties.providerBaseUrl)
         .requireAudience(oidcProperties.clientId)
 
     /**
