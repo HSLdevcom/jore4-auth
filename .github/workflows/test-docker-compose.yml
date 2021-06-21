@@ -1,0 +1,26 @@
+name: Test whether the dockerized version works
+
+on:
+  push:
+  pull_request:
+    branches: [main]
+
+jobs:
+  test-docker-compose:
+    name: verify docker-compose setup
+    runs-on: ubuntu-20.04
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Start docker-compose
+        run: docker-compose up -d
+
+      - name: Verify that dockerized Auth Backend API is up and running, also behind with an ingress
+        run: |
+          for i in {1..20}; do
+            curl --fail http://localhost:3301/api/auth/public/v1/login --output /dev/null --silent && break
+            sleep 5
+            echo $i
+          done
