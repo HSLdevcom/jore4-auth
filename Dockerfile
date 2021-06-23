@@ -27,3 +27,6 @@ COPY --from=builder /build/target/*.jar /usr/src/jore4-auth/auth-backend.jar
 
 # read docker secrets into environment varaibles and run application
 CMD /bin/bash -c "source /tmp/read-secrets.sh && java -jar /usr/src/jore4-auth/auth-backend.jar"
+
+HEALTHCHECK --interval=1m --timeout=5s \
+  CMD curl --fail http://localhost:8080/actuator/health
