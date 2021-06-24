@@ -17,27 +17,7 @@ jobs:
       - name: Start auth backend with docker-compose
         run: docker-compose up -d auth
 
-      - name: Verify that dockerized Auth Backend API is up and running, also behind with an ingress
-        run: |
-          for i in {1..20}; do
-            curl --fail http://localhost:3200/actuator/health --output /dev/null --silent && exit 0
-            sleep 5
-            echo $i
-          done
-          exit 1
-
-
-      - name: Does this still run? 1
-        run: echo yes
-
-      - name: Verify that fail does fail
-        run: |
-          for i in {1..20}; do
-            curl --fail http://localhost:8123/actuator/health --output /dev/null --silent && exit 0
-            sleep 5
-            echo $i
-          done
-          exit 1
-
-      - name: Does this still run? 2
-        run: echo no
+      - name: Verify that dockerized Auth Backend API is up and running
+        uses: HSLdevcom/jore4-tools/github-actions/healthcheck@healthcheck-v1
+        with:
+          command: "curl --fail http://localhost:3200/actuator/health --output /dev/null --silent"
