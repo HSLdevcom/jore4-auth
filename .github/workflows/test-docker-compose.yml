@@ -21,8 +21,11 @@ jobs:
         run: |
           set -e
           for i in {1..2}; do
-            curl --fail http://localhost:3301/api/auth/public/v1/login --output /dev/null --silent && exit 0
+            curl --fail http://localhost:3200/actuator/health --output /dev/null --silent && exit 0
             sleep 5
             echo $i
           done
           exit 1
+
+      - name: Does this still run?
+        run: echo yes
