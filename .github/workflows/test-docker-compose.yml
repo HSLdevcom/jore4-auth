@@ -14,6 +14,11 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v2
 
+      - name: Verify that dockerized Auth Backend API is up and running
+        uses: HSLdevcom/jore4-tools/github-actions/healthcheck@healthcheck-v1
+        with:
+          command: "curl --fail http://localhost:3200/actuator/health --output /dev/null --silent"
+          
       - name: Start auth backend with docker-compose
         run: docker-compose up -d auth
 
