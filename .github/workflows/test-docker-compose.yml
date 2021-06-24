@@ -26,5 +26,18 @@ jobs:
           done
           exit 1
 
-      - name: Does this still run?
+
+      - name: Does this still run? 1
         run: echo yes
+
+      - name: Verify that fail does fail
+        run: |
+          for i in {1..20}; do
+            curl --fail http://localhost:8123/actuator/health --output /dev/null --silent && exit 0
+            sleep 5
+            echo $i
+          done
+          exit 1
+
+      - name: Does this still run? 2
+        run: echo no
