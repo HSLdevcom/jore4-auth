@@ -15,7 +15,7 @@ jobs:
         uses: actions/checkout@v2
 
       - name: Start auth backend with docker-compose
-        run: docker-compose up auth -d
+        run: docker-compose up -d auth
 
       - name: Verify that dockerized Auth Backend API is up and running, also behind with an ingress
         run: |
