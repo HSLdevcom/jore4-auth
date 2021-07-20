@@ -3,7 +3,9 @@ package fi.hsl.jore4.auth
 import com.github.tomakehurst.wiremock.WireMockServer
 import com.github.tomakehurst.wiremock.client.WireMock
 import com.github.tomakehurst.wiremock.client.WireMock.containing
+import com.github.tomakehurst.wiremock.client.WireMock.equalTo
 import com.nimbusds.jose.jwk.JWK
+import fi.hsl.jore4.auth.oidc.OIDCAuthInterceptor
 import io.jsonwebtoken.Jwts
 import io.jsonwebtoken.SignatureAlgorithm
 import org.springframework.http.MediaType
@@ -72,10 +74,52 @@ object MockOIDCProvider {
             )
     }
 
+    fun returnTokensForCorrectRefreshToken(accessToken: String, refreshToken: String) {
+        WireMock
+            .givenThat(WireMock.post(WireMock.urlEqualTo(Constants.OIDC_PROVIDER_TOKEN_ENDPOINT_PATH))
+                .atPriority(1)
+                .withRequestBody(containing(urlEncodedParameter("grant_type", "refresh_token")))
+                .withRequestBody(containing(urlEncodedParameter("refresh_token", Constants.OIDC_REFRESH_TOKEN)))
+                .willReturn(WireMock.okForContentType(MediaType.APPLICATION_JSON_VALUE,
+                    String.format(Constants.OIDC_PROVIDER_TOKEN_RESPONSE_TEMPLATE, accessToken, refreshToken)))
+            )
+
+        WireMock
+            .givenThat(WireMock.post(WireMock.urlEqualTo(Constants.OIDC_PROVIDER_TOKEN_ENDPOINT_PATH))
+                .atPriority(2)
+                .willReturn(WireMock.unauthorized())
+            )
+    }
+
     fun returnJwksContent() {
         WireMock
             .givenThat(WireMock.get(WireMock.urlEqualTo(Constants.OIDC_PROVIDER_JWKS_URI_PATH))
                 .willReturn(WireMock.okForContentType(MediaType.APPLICATION_JSON_VALUE, Constants.OIDC_PROVIDER_JWKS_RESPONSE)))
+    }
+
+    fun returnUserInfo(validAccessToken: String? = null) {
+        if (validAccessToken != null) {
+            WireMock
+                .givenThat(
+                    WireMock.get(WireMock.urlEqualTo(Constants.OIDC_PROVIDER_USERINFO_ENDPOINT_PATH))
+                        .atPriority(1)
+                        .withHeader(
+                            OIDCAuthInterceptor.AUTHORIZATION_HEADER,
+                            equalTo("${OIDCAuthInterceptor.AUTHORIZATION_BEARER_PREFIX}$validAccessToken")
+                        )
+                        .willReturn(
+                            WireMock.okForContentType(
+                                MediaType.APPLICATION_JSON_VALUE,
+                                Constants.OIDC_PROVIDER_USERINFO_RESPONSE
+                            )
+                        )
+                )
+        }
+
+        WireMock
+            .givenThat(WireMock.get(WireMock.urlEqualTo(Constants.OIDC_PROVIDER_USERINFO_ENDPOINT_PATH))
+                .atPriority(2)
+                .willReturn(WireMock.unauthorized()))
     }
 
     fun urlEncodedParameter(param: String, value: String) =
