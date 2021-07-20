@@ -193,4 +193,41 @@ object Constants {
             ]
         }
     """
+
+    const val OIDC_PROVIDER_USERINFO_RESPONSE = """
+        {
+            "https://oneportal.trivore.com/claims/namespace": "jore4",
+            "sub": "60643ec68823e65ee44a9050",
+            "updated_at": 1623308975,
+            "https://oneportal.trivore.com/claims/active_external_permissions": {
+                "active": [
+                    {
+                        "permissionId": "01234567890abcdefghijklm",
+                        "permissionGroupId": "abcdefghijklmnopqrstuvwx",
+                        "permissionExternalId": "somePermission1",
+                        "grantedById": "1234567890abcdefghijklmn",
+                        "grantedByType": "User",
+                        "grantedTime": "2021-06-12T07:21:14.089Z",
+                        "grantedToType": "CustomRole",
+                        "grantedToId": "234567890abcdefghijklmno"
+                    },
+                    {
+                        "permissionId": "34567890abcdefghijklmnop",
+                        "permissionGroupId": "abcdefghijklmnopqrstuvwx",
+                        "permissionExternalId": "anotherPermission2",
+                        "grantedById": "1234567890abcdefghijklmn",
+                        "grantedByType": "User",
+                        "grantedTime": "2021-06-12T09:21:14.089Z",
+                        "grantedToType": "CustomRole",
+                        "grantedToId": "234567890abcdefghijklmno"
+                    }
+                ]
+            },
+            "name": "User Person",
+            "preferred_username": "user.person@domain.xyz",
+            "given_name": "User",
+            "family_name": "Person",
+            "https://oneportal.trivore.com/claims/tags": []
+        }
+    """
 }

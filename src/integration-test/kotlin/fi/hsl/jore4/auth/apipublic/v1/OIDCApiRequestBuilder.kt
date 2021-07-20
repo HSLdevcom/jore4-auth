@@ -24,6 +24,9 @@ class OIDCApiRequestBuilder(
                 .queryParam("state", state)
         )
 
+    fun getUserInfo(session: MockHttpSession? = null): ResultActions =
+        mockMvc.perform(getWithSession("/public/v1/userInfo", session))
+
     private fun getWithSession(path: String, session: MockHttpSession? = null): MockHttpServletRequestBuilder {
         val requestBuilder = MockMvcRequestBuilders.get("$apiPathPrefix$path")
 
