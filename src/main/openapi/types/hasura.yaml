@@ -1,0 +1,19 @@
+openapi: "3.0.0"
+
+definitions:
+  session:
+    description: >
+      Contains the hasura session data of the logged in user for a certain request as defined
+      by the Hasura webhook specification
+      (https://hasura.io/docs/latest/graphql/core/auth/authentication/webhook.html).
+    type: object
+    properties:
+      X-Hasura-User-Id:
+        type: string
+        description: The unique id of the user whose request to authorized.
+      X-Hasura-Role:
+        type: string
+        description: The role granted to the user for the authorized request.
+      Cache-Control:
+        type: string
+        description: The cache-control options for this session information.

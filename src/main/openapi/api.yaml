@@ -13,3 +13,5 @@ paths:
     $ref: './authentication.yaml#/paths/login'
   /logout:
     $ref: './authentication.yaml#/paths/logout'
+  /hasura/webhook:
+    $ref: './hasura.yaml#/paths/webhook'
