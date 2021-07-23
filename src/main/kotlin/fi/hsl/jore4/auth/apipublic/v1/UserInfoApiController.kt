@@ -1,5 +1,6 @@
 package fi.hsl.jore4.auth.apipublic.v1
 
+import fi.hsl.jore4.auth.apipublic.v1.model.UserInfoApiDTO
 import fi.hsl.jore4.auth.userInfo.UserInfoService
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
@@ -23,7 +24,7 @@ open class UserInfoApiController(
     /**
      * Retrieve the currently logged in user's user info.
      */
-    override fun getUserInfo(): ResponseEntity<Map<String, Any>> {
+    override fun getUserInfo(): ResponseEntity<UserInfoApiDTO> {
         LOGGER.info("Fetching user info of currently logged in user")
 
         val userInfo = userInfoService.getUserInfo()

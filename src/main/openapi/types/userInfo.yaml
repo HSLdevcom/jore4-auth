@@ -5,4 +5,26 @@ definitions:
     description: >
       Contains information about the currently logged in user.
     type: object
-    additionalProperties: true
+    properties:
+      id:
+        type: string
+        description: Unique user identifier.
+      fullName:
+        type: string
+        description: >
+          The user's full name. Usually consists of both given and family
+          names separated by spaces.
+      givenName:
+        type: string
+        description: Given or first name of the user.
+      familyName:
+        type: string
+        description: Family name of the user.
+      permissions:
+        type: array
+        items:
+          type: string
+        description: The permissions granted to the user.
+    required:
+      - id
+      - permissions

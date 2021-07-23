@@ -132,8 +132,8 @@ object MockOIDCProvider {
                 .willReturn(WireMock.okForContentType(MediaType.APPLICATION_JSON_VALUE, Constants.OIDC_PROVIDER_JWKS_RESPONSE)))
     }
 
-    fun returnUserInfo(validAccessToken: String? = null) {
-        if (validAccessToken != null) {
+    fun returnUserInfo(userInfoContent: String? = null, validAccessToken: String? = null) {
+        if (userInfoContent != null && validAccessToken != null) {
             WireMock
                 .givenThat(
                     WireMock.get(WireMock.urlEqualTo(Constants.OIDC_PROVIDER_USERINFO_ENDPOINT_PATH))
@@ -145,7 +145,7 @@ object MockOIDCProvider {
                         .willReturn(
                             WireMock.okForContentType(
                                 MediaType.APPLICATION_JSON_VALUE,
-                                Constants.OIDC_PROVIDER_USERINFO_RESPONSE
+                                userInfoContent
                             )
                         )
                 )
@@ -181,5 +181,23 @@ object MockOIDCProvider {
             .claim("aud", audience)
             .signWith(signatureAlgorithm, signingKey)
             .compact()
+    }
+
+    fun createUserInfoResponseContent(
+        sub: String, firstName: String, familyName: String, fullName: String,
+        vararg extPermissions: Pair<String, String>
+    ): String {
+        val extPermissionContent = extPermissions.joinToString(",") { extPermission ->
+            String.format(
+                Constants.OIDC_PROVIDER_USERINFO_EXT_PERMISSION_TEMPLATE,
+                extPermission.first,
+                extPermission.second
+            )
+        }
+
+        return String.format(Constants.OIDC_PROVIDER_USERINFO_RESPONSE_TEMPLATE,
+            sub, extPermissionContent,
+            fullName, firstName, familyName
+        )
     }
 }
