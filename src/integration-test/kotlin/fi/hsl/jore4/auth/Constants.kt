@@ -194,40 +194,143 @@ object Constants {
         }
     """
 
-    const val OIDC_PROVIDER_USERINFO_RESPONSE = """
+    const val RO_USER_EXT_PERMISSION_ID = "0123456789ABCDE"
+    const val RO_USER_EXT_PERMISSION_EXT_ID = "read-only"
+    const val RO_USER_SUB = "60643ec68823e65ee44a9050"
+    const val RO_USER_FIRST_NAME = "Rita"
+    const val RO_USER_LAST_NAME = "Readonly"
+    const val RO_USER_FULL_NAME = "$RO_USER_FIRST_NAME Roswita $RO_USER_LAST_NAME"
+
+    const val RW_USER_EXT_PERMISSION_1_ID = "123456789ABCDEFGH"
+    const val RW_USER_EXT_PERMISSION_1_EXT_ID = "RO"
+    const val RW_USER_EXT_PERMISSION_2_ID = "23456789ABCDEFGHIJ"
+    const val RW_USER_EXT_PERMISSION_2_EXT_ID = "read-and-write"
+    const val RW_USER_SUB = "13643ec68823e65ee4479432"
+    const val RW_USER_FIRST_NAME = "Alicia"
+    const val RW_USER_LAST_NAME = "Admin"
+    const val RW_USER_FULL_NAME = "$RW_USER_FIRST_NAME $RW_USER_LAST_NAME"
+
+    const val OIDC_PROVIDER_USERINFO_RESPONSE_TEMPLATE = """
         {
             "https://oneportal.trivore.com/claims/namespace": "jore4",
-            "sub": "60643ec68823e65ee44a9050",
+            "sub": "%s",
             "updated_at": 1623308975,
             "https://oneportal.trivore.com/claims/active_external_permissions": {
                 "active": [
+                    %s
+                ]
+            },
+            "name": "%s",
+            "preferred_username": "user.person@domain.xyz",
+            "given_name": "%s",
+            "family_name": "%s",
+            "https://oneportal.trivore.com/claims/tags": []
+        }
+    """
+
+    const val OIDC_PROVIDER_USERINFO_RESPONSE_WO_SUB_CLAIM = """
+        {
+            "https://oneportal.trivore.com/claims/namespace": "jore4",
+            "updated_at": 1623308975,
+            "name": "Someone Clever",
+            "preferred_username": "user.person@domain.xyz",
+            "given_name": "Someone",
+            "family_name": "Clever",
+            "https://oneportal.trivore.com/claims/tags": [],
+            "https://oneportal.trivore.com/claims/active_external_permissions": {
+                "active": [
                     {
-                        "permissionId": "01234567890abcdefghijklm",
+                        "permissionId": "019283038374abcdef",
                         "permissionGroupId": "abcdefghijklmnopqrstuvwx",
-                        "permissionExternalId": "somePermission1",
+                        "invalidPermissionExternalId": "permission1",
                         "grantedById": "1234567890abcdefghijklmn",
                         "grantedByType": "User",
                         "grantedTime": "2021-06-12T07:21:14.089Z",
                         "grantedToType": "CustomRole",
                         "grantedToId": "234567890abcdefghijklmno"
-                    },
+                    }
+                ]
+            }
+        }
+    """
+
+    const val OIDC_PROVIDER_USERINFO_RESPONSE_WO_EXT_PERMISSIONS = """
+        {
+            "https://oneportal.trivore.com/claims/namespace": "jore4",
+            "sub": "60643ec68823e65ee44a9050",
+            "updated_at": 1623308975,
+            "name": "Someone Clever",
+            "preferred_username": "user.person@domain.xyz",
+            "given_name": "Someone",
+            "family_name": "Clever",
+            "https://oneportal.trivore.com/claims/tags": []
+        }
+    """
+
+    const val OIDC_PROVIDER_USERINFO_RESPONSE_WO_ACTIVE_EXT_PERMISSIONS = """
+        {
+            "https://oneportal.trivore.com/claims/namespace": "jore4",
+            "sub": "60643ec68823e65ee44a9050",
+            "updated_at": 1623308975,
+            "name": "Someone Clever",
+            "preferred_username": "user.person@domain.xyz",
+            "given_name": "Someone",
+            "family_name": "Clever",
+            "https://oneportal.trivore.com/claims/tags": [],
+            "https://oneportal.trivore.com/claims/active_external_permissions": {
+                "notactive": [
                     {
-                        "permissionId": "34567890abcdefghijklmnop",
+                        "permissionId": "019283038374abcdef",
                         "permissionGroupId": "abcdefghijklmnopqrstuvwx",
-                        "permissionExternalId": "anotherPermission2",
+                        "permissionExternalId": "permission1",
                         "grantedById": "1234567890abcdefghijklmn",
                         "grantedByType": "User",
-                        "grantedTime": "2021-06-12T09:21:14.089Z",
+                        "grantedTime": "2021-06-12T07:21:14.089Z",
                         "grantedToType": "CustomRole",
                         "grantedToId": "234567890abcdefghijklmno"
                     }
                 ]
-            },
-            "name": "User Person",
+            }
+        }
+    """
+
+    const val OIDC_PROVIDER_USERINFO_RESPONSE_WITH_INVALID_ACTIVE_EXT_PERMISSION = """
+        {
+            "https://oneportal.trivore.com/claims/namespace": "jore4",
+            "sub": "60643ec68823e65ee44a9050",
+            "updated_at": 1623308975,
+            "name": "Someone Clever",
             "preferred_username": "user.person@domain.xyz",
-            "given_name": "User",
-            "family_name": "Person",
-            "https://oneportal.trivore.com/claims/tags": []
+            "given_name": "Someone",
+            "family_name": "Clever",
+            "https://oneportal.trivore.com/claims/tags": [],
+            "https://oneportal.trivore.com/claims/active_external_permissions": {
+                "active": [
+                    {
+                        "permissionId": "019283038374abcdef",
+                        "permissionGroupId": "abcdefghijklmnopqrstuvwx",
+                        "invalidPermissionExternalId": "permission1",
+                        "grantedById": "1234567890abcdefghijklmn",
+                        "grantedByType": "User",
+                        "grantedTime": "2021-06-12T07:21:14.089Z",
+                        "grantedToType": "CustomRole",
+                        "grantedToId": "234567890abcdefghijklmno"
+                    }
+                ]
+            }
+        }
+    """
+
+    const val OIDC_PROVIDER_USERINFO_EXT_PERMISSION_TEMPLATE = """
+        {
+            "permissionId": "%s",
+            "permissionGroupId": "abcdefghijklmnopqrstuvwx",
+            "permissionExternalId": "%s",
+            "grantedById": "1234567890abcdefghijklmn",
+            "grantedByType": "User",
+            "grantedTime": "2021-06-12T07:21:14.089Z",
+            "grantedToType": "CustomRole",
+            "grantedToId": "234567890abcdefghijklmno"
         }
     """
 }
