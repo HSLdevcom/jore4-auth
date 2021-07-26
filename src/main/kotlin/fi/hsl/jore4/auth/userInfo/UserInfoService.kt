@@ -39,7 +39,7 @@ open class UserInfoService(
      * Send a OIDC user-info request to the OIDC provider and forwards the response to our caller.
      */
     open fun getUserInfo(): UserInfoApiDTO {
-        LOGGER.info("Fetching user info...")
+        LOGGER.debug("Fetching user info...")
 
         val response = httpClient
             .newCall(Request.Builder()
@@ -86,7 +86,7 @@ open class UserInfoService(
             throw UnauthorizedException("Could not parse user info")
         }
 
-        LOGGER.info("Fetched user info {}", userInfo)
+        LOGGER.debug("Fetched user info {}", userInfo)
         return userInfo
     }
 }
