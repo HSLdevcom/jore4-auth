@@ -1,16 +1,16 @@
 package fi.hsl.jore4.auth.apipublic.v1
 
+import fi.hsl.jore4.auth.SessionRequestBuilder
 import fi.hsl.jore4.auth.apipublic.v1.OIDCCodeExchangeApiController.Companion.EXCHANGE_ENDPOINT_PATH_SUFFIX
 import org.springframework.mock.web.MockHttpSession
 import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.ResultActions
-import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder
-import org.springframework.test.web.servlet.request.MockMvcRequestBuilders
 
 class OIDCApiRequestBuilder(
     private val mockMvc: MockMvc,
-    private val apiPathPrefix: String
-) {
+    apiPathPrefix: String
+) : SessionRequestBuilder(apiPathPrefix) {
+
     fun login(session: MockHttpSession? = null): ResultActions =
         mockMvc.perform(getWithSession("/public/v1/login", session))
 
@@ -26,10 +26,4 @@ class OIDCApiRequestBuilder(
 
     fun getUserInfo(session: MockHttpSession? = null): ResultActions =
         mockMvc.perform(getWithSession("/public/v1/userInfo", session))
-
-    private fun getWithSession(path: String, session: MockHttpSession? = null): MockHttpServletRequestBuilder {
-        val requestBuilder = MockMvcRequestBuilders.get("$apiPathPrefix$path")
-
-        return session?.let { requestBuilder.session(it) } ?: requestBuilder
-    }
 }
