@@ -4,6 +4,8 @@ info:
   title: Jore4 Auth API
   license:
     name: EUPL 1.2
+servers:
+  - url: https://jore.hsl.fi/api/auth/public/v1
 paths:
   /userInfo:
     $ref: './userInfo.yaml#/paths/getUserInfo'
