@@ -87,17 +87,20 @@ them as environment variables.
 
 The following configuration properties are to be defined for each environment:
 
-| Config property        | Environment variable   | Secret name            | Example                 | Description                                  |
-| ---------------------- | ---------------------- | ---------------------- | ----------------------- | -------------------------------------------- |
-| -                      | SECRET_STORE_BASE_PATH | -                      | /run/secrets            | Directory containing the docker secrets      |
-| self.public.base.url   | SELF_PUBLIC_BASE_URL   | self-public-base-url   | https://jore.hsl.fi     | Jore4 auth base URL as the world sees it     |
-| loginpage.url          | LOGINPAGE_URL          | loginpage-url          | https://jore.hsl.fi     | The full URL to which to return after login  |
-| logoutpage.url         | LOGOUTPAGE_URL         | logoutpage-url         | https://jore.hsl.fi     | The full URL to which to return after logout |
-| oidc.provider.base.url | OIDC_PROVIDER_BASE_URL | oidc-provider-base-url | https://id.hsl.fi       | The base URL of the OIDC provider            |
-| oidc.client.id         | OIDC_CLIENT_ID         | oidc-client-id         | ***                     | The client id from the OIDC provider         |
-| oidc.client.secret     | OIDC_CLIENT_SECRET     | oidc-client-secret     | ***                     | The client secret from the OIDC provider     |
-| api.path.prefix        | API_PATH_PREFIX        | api-path-prefix        | /api                    | Base URL of the API within the container     |
-| api.path.prefix.public | API_PATH_PREFIX_PUBLIC | api-path-prefix-public | /api/auth               | Exposed base URL for API (e.g. from browser) |
+| Config property            | Environment variable       | Secret name                | Example                 | Description                                           |
+| ----------------------     | -------------------------- | -------------------------- | ----------------------- | ----------------------------------------------------- |
+| -                          | SECRET_STORE_BASE_PATH     | -                          | /run/secrets            | Directory containing the docker secrets               |
+| self.public.base.url       | SELF_PUBLIC_BASE_URL       | self-public-base-url       | https://jore.hsl.fi     | Jore4 auth base URL as the world sees it              |
+| loginpage.url              | LOGINPAGE_URL              | loginpage-url              | https://jore.hsl.fi     | The full URL to which to return after login           |
+| logoutpage.url             | LOGOUTPAGE_URL             | logoutpage-url             | https://jore.hsl.fi     | The full URL to which to return after logout          |
+| oidc.provider.base.url     | OIDC_PROVIDER_BASE_URL     | oidc-provider-base-url     | https://id.hsl.fi       | The base URL of the OIDC provider                     |
+| oidc.client.id             | OIDC_CLIENT_ID             | oidc-client-id             | ***                     | The client id from the OIDC provider                  |
+| oidc.client.secret         | OIDC_CLIENT_SECRET         | oidc-client-secret         | ***                     | The client secret from the OIDC provider              |
+| api.path.prefix            | API_PATH_PREFIX            | api-path-prefix            | /api                    | Base URL of the API within the container              |
+| api.path.prefix.public     | API_PATH_PREFIX_PUBLIC     | api-path-prefix-public     | /api/auth               | Exposed base URL for API (e.g. from browser)          |
+| spring.datasource.url      | SPRING_DATASOURCE_URL      | spring-datasource-url      | jdbc:postgresql://postgres-host:5432/auth_session_db?currentSchema=auth_session_schema | Persistent session database connection URL |
+| spring.datasource.username | SPRING_DATASOURCE_USERNAME | spring-datasource-username | somedbusername          | Username used to connect to the persistent session db |
+| spring.datasource.password | SPRING_DATASOURCE_PASSWORD | spring-datasource-password | ***                     | Password used to connect to the persistent session db |
 
 More properties can be found from `/profiles/prod/config.properties`
 
