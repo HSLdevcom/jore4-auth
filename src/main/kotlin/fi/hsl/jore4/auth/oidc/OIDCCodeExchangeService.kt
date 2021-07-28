@@ -65,7 +65,7 @@ open class OIDCCodeExchangeService(
             throw AuthenticationException("Could not exchange code for token")
         }
 
-        LOGGER.debug("Received user tokens tokens.")
+        LOGGER.debug("Received user tokens.")
 
         val successResponse = response.toSuccessResponse() as OIDCTokenResponse
 
