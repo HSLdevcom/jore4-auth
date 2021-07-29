@@ -4,6 +4,7 @@ import com.github.tomakehurst.wiremock.WireMockServer
 import com.github.tomakehurst.wiremock.client.WireMock
 import com.github.tomakehurst.wiremock.client.WireMock.containing
 import com.github.tomakehurst.wiremock.client.WireMock.equalTo
+import com.github.tomakehurst.wiremock.common.FatalStartupException
 import com.nimbusds.jose.jwk.JWK
 import com.nimbusds.oauth2.sdk.auth.ClientSecretBasic
 import com.nimbusds.oauth2.sdk.auth.Secret
@@ -12,6 +13,7 @@ import fi.hsl.jore4.auth.oidc.OIDCAuthInterceptor
 import io.jsonwebtoken.Jwts
 import io.jsonwebtoken.SignatureAlgorithm
 import org.springframework.http.MediaType
+import java.lang.IllegalStateException
 import java.net.URLEncoder
 import java.util.*
 
@@ -19,6 +21,9 @@ import java.util.*
  * Singleton to create and manage the WireMock instance used as the OIDC provider in tests.
  */
 object MockOIDCProvider {
+    private const val WIREMOCK_START_NUM_TRIES = 10
+    private const val WIREMOCK_START_RETRY_DELAY_SECS = 5
+
     private const val OIDC_DISCOVERY_PATH = "/.well-known/openid-configuration"
 
     private var wireMockServer: WireMockServer
@@ -39,17 +44,37 @@ object MockOIDCProvider {
         wireMockServer = create()
     }
 
+    fun stop() = wireMockServer.stop()
+
     /**
      * This method creates a new {@code WireMockServer} object,
      * configures the created server and starts it.
      *
+     * If creating the {@code WireMockServer} fails, it is retried up to
+     * {@code WIREMOCK_START_NUM_TRIES} times. This can be useful when the
+     * port used is released by the OS with a delay.
+     *
      * @return The created WireMock OIDC provider.
      */
     private fun create(): WireMockServer {
-        val wireMockServer = WireMockServer(Constants.OIDC_PROVIDER_PORT)
-        wireMockServer.start()
-        WireMock.configureFor(wireMockServer.port())
-        return wireMockServer
+        var tries = WIREMOCK_START_NUM_TRIES
+
+        while (tries-- > 0) {
+            try {
+                val wireMockServer = WireMockServer(Constants.OIDC_PROVIDER_PORT)
+                wireMockServer.start()
+                WireMock.configureFor(wireMockServer.port())
+                return wireMockServer
+            } catch (ex: FatalStartupException) {
+                if (tries <= 0) {
+                    throw ex
+                }
+            }
+
+            Thread.sleep(WIREMOCK_START_RETRY_DELAY_SECS * 1000L)
+        }
+
+        throw IllegalStateException("Unreachable code")
     }
 
     private fun returnDiscoveryContent() {
