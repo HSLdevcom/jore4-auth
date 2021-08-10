@@ -14,10 +14,15 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v2
 
-      - name: Start auth backend with docker-compose
-        run: docker-compose up -d auth
+      - name: Start postgres and auth backend with docker-compose
+        run: docker-compose up -d postgres auth
 
       - name: Verify that dockerized Auth Backend API is up and running
         uses: HSLdevcom/jore4-tools/github-actions/healthcheck@healthcheck-v1
         with:
           command: "curl --fail http://localhost:3200/actuator/health --output /dev/null --silent"
+
+      - name: Verify that dockerized Auth Backend can access sessions from the DB
+        uses: HSLdevcom/jore4-tools/github-actions/healthcheck@healthcheck-v1
+        with:
+          command: "curl --fail http://localhost:3200/api/public/v1/login --output /dev/null --silent"

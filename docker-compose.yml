@@ -10,10 +10,35 @@ services:
     networks:
       - jore4
 
+  postgres:
+    image: "postgres:12.3-alpine"
+    restart: "unless-stopped"
+    volumes:
+      - ./docker/init-database.sh:/docker-entrypoint-initdb.d/init-database.sh
+    networks:
+      - jore4
+    ports:
+      - "127.0.0.1:6432:5432"
+    environment:
+      POSTGRES_USER: "postgres"
+      POSTGRES_PASSWORD: "postgres_pass"
+      SESSION_DATASOURCE_DB: "jore4"
+      SESSION_DATASOURCE_SCHEMA: "auth_session"
+      SESSION_DATASOURCE_USERNAME: "auth"  # must be the same as spring datasource username in auth container below
+      SESSION_DATASOURCE_PASSWORD: "auth_pass"  # must be the same as spring datasource password in auth container below
+    healthcheck:
+      test: ["CMD", "pg_isready", "-q", "-U", "${POSTGRES_USER:-postgres}"]
+      interval: 30s
+      start_period: 5s
+      timeout: 10s
+      retries: 3
+
   auth:
     container_name: auth
     build: .
     restart: "unless-stopped"
+    depends_on:
+      - postgres
     networks:
       - jore4
     ports:
@@ -26,6 +51,10 @@ services:
       LOGINPAGE_URL: "http://localhost:3301"
       LOGOUTPAGE_URL: "http://localhost:3301"
       OIDC_PROVIDER_BASE_URL: "https://hslid-dev.t5.fi"
+      SPRING_DATASOURCE_URL: "jdbc:postgresql://postgres:5432/jore4?currentSchema=auth_session"
+        # must contain the same values as specified in SESSION_DATASOURCE_DB and SESSION_DATASOURCE_SCHEMA  in postgres container above
+      SPRING_DATASOURCE_USERNAME: "auth"  # must be the same as session username in postgres container above
+      SPRING_DATASOURCE_PASSWORD: "auth_pass"  # must be the same as session password in postgres container above
     secrets:
     - oidc-client-id
     - oidc-client-secret
