@@ -10,10 +10,30 @@ services:
     networks:
       - jore4
 
+  postgres:
+    image: "postgres:12.3-alpine"
+    restart: "unless-stopped"
+    volumes:
+      - ./docker/init-database.sh:/docker-entrypoint-initdb.d/init-database.sh
+    networks:
+      - jore4
+    ports:
+      - "127.0.0.1:6432:5432"
+    env_file:
+      - ./docker/postgres.env
+    healthcheck:
+      test: ["CMD", "pg_isready", "-q", "-U", "${POSTGRES_USER:-postgres}"]
+      interval: 30s
+      start_period: 5s
+      timeout: 10s
+      retries: 3
+
   auth:
     container_name: auth
     build: .
     restart: "unless-stopped"
+    depends_on:
+      - postgres
     networks:
       - jore4
     ports:
@@ -26,6 +46,9 @@ services:
       LOGINPAGE_URL: "http://localhost:3301"
       LOGOUTPAGE_URL: "http://localhost:3301"
       OIDC_PROVIDER_BASE_URL: "https://hslid-dev.t5.fi"
+      SPRING_DATASOURCE_URL: "jdbc:postgresql://postgres:5432/auth_session"
+    env_file:
+      - ./docker/postgres.env
     secrets:
     - oidc-client-id
     - oidc-client-secret

@@ -14,8 +14,8 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v2
 
-      - name: Start auth backend with docker-compose
-        run: docker-compose up -d auth
+      - name: Start postgres and auth backend with docker-compose
+        run: docker-compose up -d postgres auth
 
       - name: Verify that dockerized Auth Backend API is up and running
         uses: HSLdevcom/jore4-tools/github-actions/healthcheck@healthcheck-v1
