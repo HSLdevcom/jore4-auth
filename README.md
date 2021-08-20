@@ -98,9 +98,12 @@ The following configuration properties are to be defined for each environment:
 | oidc.client.secret         | OIDC_CLIENT_SECRET         | oidc-client-secret         | ***                     | The client secret from the OIDC provider              |
 | api.path.prefix            | API_PATH_PREFIX            | api-path-prefix            | /api                    | Base URL of the API within the container              |
 | api.path.prefix.public     | API_PATH_PREFIX_PUBLIC     | api-path-prefix-public     | /api/auth               | Exposed base URL for API (e.g. from browser)          |
-| spring.datasource.url      | SPRING_DATASOURCE_URL      | spring-datasource-url      | jdbc:postgresql://postgres-host:5432/auth_session_db?currentSchema=auth_session_schema | Persistent session database connection URL |
-| spring.datasource.username | SPRING_DATASOURCE_USERNAME | spring-datasource-username | somedbusername          | Username used to connect to the persistent session db |
-| spring.datasource.password | SPRING_DATASOURCE_PASSWORD | spring-datasource-password | ***                     | Password used to connect to the persistent session db |
+| db.hostname                | DB_HOSTNAME                | db-hostname                | postgres-host.com       | Persistent session database host name                 |
+| db.port                    | DB_PORT                    | -                          | 5432                    | Persistent session database host port (default 5432)  |
+| db.name                    | DB_NAME                    | db-name                    | jore4                   | Persistent session database name                      |
+| db.username                | DB_USERNAME                | db-username                | auth_user               | Persistent session database user name                 |
+| db.password                | DB_PASSWORD                | db-password                | ***                     | Persistent session database user password             |
+| db.session.schema          | DB_SESSION_SCHEMA          | -                          | auth_session            | Persistent session database schema to use             |
 
 More properties can be found from `/profiles/prod/config.properties`
 
