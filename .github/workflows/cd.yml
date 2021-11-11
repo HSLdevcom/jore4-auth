@@ -1,4 +1,4 @@
-name: Docker Build & Push
+name: Push image to Docker hub and run e2e tests
 
 on:
   push:
@@ -11,27 +11,12 @@ jobs:
   push_to_registry:
     name: Build & Push docker image to dockerhub
     runs-on: ubuntu-20.04
-
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
 
-      - name: Extract branch name to env variable
-        run: |
-          # In pull requests
-          BRANCH_NAME="${GITHUB_HEAD_REF}"
-          [[ ${BRANCH_NAME} = "" ]] && {
-            # In branch pushes
-            BRANCH_NAME="$(echo "${GITHUB_REF}" | cut -d '/' -f 3-)"
-          }
-          echo "BRANCH_NAME=${BRANCH_NAME}" >> "${GITHUB_ENV}"
-
-      - name: Set environment variables
-        run: |
-          # Docker Hub uses lowercase so use a bashism to convert.
-          echo "IMAGE_NAME=${GITHUB_REPOSITORY,,}" >> $GITHUB_ENV
-          # Docker tags can use only some special characters.
-          echo "COMMIT_ID=$(echo "${BRANCH_NAME}" | tr -C '0-9a-zA-Z._' '-')-${GITHUB_SHA}" >> $GITHUB_ENV
+      - name: Extract metadata to env variables
+        uses: HSLdevcom/jore4-tools/github-actions/extract-metadata@extract-metadata-v1
 
       - name: Pull previous image to support caching
         run: docker pull $IMAGE_NAME:builder || echo "Previous builder image not found"
@@ -63,3 +48,28 @@ jobs:
         run: |
           docker push $IMAGE_NAME:builder
           docker push $IMAGE_NAME:latest
+
+  run_e2e_tests:
+    needs: push_to_registry
+    name: Run e2e tests
+    runs-on: ubuntu-20.04
+    steps:
+      - name: Extract metadata to env variables
+        uses: HSLdevcom/jore4-tools/github-actions/extract-metadata@extract-metadata-v1
+
+      - name: start e2e env
+        uses: HSLdevcom/jore4-flux/github-actions/setup-e2e-environment@setup-e2e-environment-v1
+        with:
+          auth_version: $IMAGE_NAME:$COMMIT_ID
+
+      - name: run e2e smoke tests
+        id: tests
+        uses: HSLdevcom/jore4-robot/github-actions/run-rf-tests@actions-v1
+        with:
+          included_tag: smoke
+          e2e_username: ${{ secrets.ROBOT_HSLID_EMAIL }}
+          e2e_password: ${{ secrets.ROBOT_HSLID_PASSWORD }}
+
+      - name: upload test results
+        if: always()
+        uses: HSLdevcom/jore4-robot/github-actions/upload-results@actions-v1
