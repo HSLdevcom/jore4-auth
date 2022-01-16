@@ -22,8 +22,8 @@ class OIDCAuthInterceptor(
     companion object {
         private val LOGGER = LoggerFactory.getLogger(OIDCAuthInterceptor::class.java)
 
-        public const val AUTHORIZATION_HEADER = "Authorization"
-        public const val AUTHORIZATION_BEARER_PREFIX = "Bearer "
+        const val AUTHORIZATION_HEADER = "Authorization"
+        const val AUTHORIZATION_BEARER_PREFIX = "Bearer "
     }
 
     /**
