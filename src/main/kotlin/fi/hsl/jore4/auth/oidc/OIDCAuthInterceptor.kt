@@ -45,11 +45,13 @@ class OIDCAuthInterceptor(
         userTokenSet: UserTokenSet,
         sendNewRequest: (UserTokenSet) -> Response
     ): Response? {
+        LOGGER.debug("Refreshing tokens")
 
         return try {
             // let's check if our token has expired and refresh if needed.
             val newTokenSet = verificationService.verifyOrRefreshTokens(userTokenSet)
             if (newTokenSet != null) {
+                LOGGER.debug("Re-sending request with updated access token")
                 // if the token set was updated
                 sendNewRequest(newTokenSet)
             } else null  // access token was not updated
@@ -66,6 +68,7 @@ class OIDCAuthInterceptor(
         chain: Interceptor.Chain, userTokenSet: UserTokenSet,
         storeUserTokenSet: (UserTokenSet) -> Unit
     ): Response {
+        LOGGER.debug("Sending request with access token")
 
         val response = proceedWithAccessToken(chain, userTokenSet.accessToken)
 
