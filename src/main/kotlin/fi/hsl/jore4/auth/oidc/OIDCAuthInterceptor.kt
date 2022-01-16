@@ -89,7 +89,7 @@ class OIDCAuthInterceptor(
     /**
      * Add the user's access token as an authorization header to the request to be sent.
      *
-     * In case we get a 401 (unauthorized) response, we check the verify the access token and try to
+     * In case we get a 401 (unauthorized) response, we check verify the access token and try to
      * refresh it in case it has expired. After a successful refresh, we re-send the request.
      *
      * If the user does not have a session or if the session does not contain an access token,

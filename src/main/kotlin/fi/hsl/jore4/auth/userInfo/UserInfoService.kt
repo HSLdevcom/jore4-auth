@@ -56,7 +56,7 @@ open class UserInfoService(
         //
         // We treat these cases the same way, so we don't leak any information in case of a more detailed response.
         //
-        // Note this condition usually does not depict an error.
+        // Note that this condition usually does not depict an error.
         if (!response.isSuccessful) {
             throw UnauthorizedException("Could not retrieve user info")
         }
@@ -73,7 +73,7 @@ open class UserInfoService(
                 givenName = result[GIVEN_NAME_CLAIM]?.toString()
                 familyName = result[FAMILY_NAME_CLAIM]?.toString()
 
-                // we can suppress the unchecked cast warning, since we're only interested whether an exception
+                // we can suppress the unchecked cast warning, since we're only interested in whether an exception
                 // is thrown in case of a cast failure (which will result in us throwing an UnauthorizedException)
                 @Suppress("UNCHECKED_CAST")
                 permissions = (result[EXT_PERMISSIONS_CLAIM] as Map<String, ArrayList<Map<String, String>>>)["active"]!!
