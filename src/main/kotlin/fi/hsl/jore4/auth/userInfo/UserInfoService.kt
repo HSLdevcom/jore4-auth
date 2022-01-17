@@ -58,6 +58,7 @@ open class UserInfoService(
         //
         // Note that this condition usually does not depict an error.
         if (!response.isSuccessful) {
+            response.close()
             throw UnauthorizedException("Could not retrieve user info")
         }
 
@@ -82,6 +83,7 @@ open class UserInfoService(
             }
         }
         catch (ex: Exception) {
+            response.close()
             // if any part of parsing or interpreting the user info claims goes wrong, respond with 401 Unauthorized
             throw UnauthorizedException("Could not parse user info")
         }
