@@ -17,18 +17,13 @@ import javax.naming.AuthenticationException
  * Holds the user's access and refresh tokens and refreshes them.
  */
 class UserTokenSet(
-    accessToken: AccessToken,
-    refreshToken: RefreshToken
+    val accessToken: AccessToken,
+    val refreshToken: RefreshToken
 ) : Serializable {
 
     companion object {
         private val LOGGER = LoggerFactory.getLogger(UserTokenSet::class.java)
     }
-
-    var accessToken: AccessToken = accessToken
-        private set
-    var refreshToken: RefreshToken = refreshToken
-        private set
 
     /**
      * Refresh the access and refresh tokens.
