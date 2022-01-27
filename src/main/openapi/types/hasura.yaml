@@ -10,7 +10,7 @@ definitions:
     properties:
       X-Hasura-User-Id:
         type: string
-        description: The unique id of the user whose request to authorized.
+        description: The unique id of the user whose request to authorize.
       X-Hasura-Role:
         type: string
         description: The role granted to the user for the authorized request.

@@ -8,7 +8,7 @@ paths:
       summary: Hasura authorization webhook
       description: >
         Returns the hasura session data of the currently logged in user for the request
-        to be authorized or 401 Unauthorized of the request was not authorized.
+        to be authorized or 401 Unauthorized if the request was not authorized.
       operationId: webhook
       produces:
         - application/json

@@ -5,7 +5,7 @@ paths:
     get:
       tags:
         - userInfo
-      summary: User userInfo endpoint
+      summary: User info endpoint
       description: Returns user info of the currently logged in user
       operationId: getUserInfo
       produces:

@@ -6,21 +6,22 @@ paths:
       tags:
         - authentication
       summary: Login endpoint
-      description: Redirects user to OIDC provider
+      description: Redirects user to OIDC provider login page
       operationId: login
       produces:
         - application/json
       responses:
         302:
-          description: Redirect to OIDC provider
+          description: Redirect to OIDC provider login page
   logout:
     get:
       tags:
         - authentication
       summary: Logout endpoint
+      description: Redirects user to OIDC provider logout page
       operationId: logout
       produces:
         - application/json
       responses:
         302:
-          description: Redirect to OIDC provider logout
+          description: Redirect to OIDC provider logout page
