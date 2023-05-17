@@ -25,12 +25,10 @@ For more information on OpenID Connect, please see
 ## How to run with docker-compose
 
 ```
-docker-compose up --build
-
+development.sh start
 ```
 
-Runs frontend and auth backend through nginx proxy that maps UI to localhost:3301/ and auth backend to localhost:3301/api/auth
-Frontend directly accessible through localhost:3302 and auth backend through localhost:3200
+Starts the auth service and jore4 postgres database in docker containers
 
 ## Building for deployment
 
