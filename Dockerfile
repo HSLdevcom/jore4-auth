@@ -14,7 +14,7 @@ COPY ./profiles/prod /build/profiles/prod
 RUN mvn clean package spring-boot:repackage -Pprod
 
 # distributed docker image
-FROM openjdk:11-jre
+FROM openjdk:11.0.16-jre
 
 # expose server port
 EXPOSE 8080
