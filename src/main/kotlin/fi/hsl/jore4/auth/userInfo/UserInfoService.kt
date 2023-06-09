@@ -66,7 +66,7 @@ open class UserInfoService(
 
         try {
             val result: Map<String, Any> =
-                ObjectMapper().readValue(response.body()!!.string(), HashMap<String, Any>().javaClass)
+                ObjectMapper().readValue(response.body!!.string(), HashMap<String, Any>().javaClass)
 
             userInfo = SafeUserInfoApiDTO().apply {
                 id = result[ID_CLAIM].toString()

@@ -70,9 +70,9 @@ class OIDCAuthInterceptor(
     ): Response {
         LOGGER.debug("Sending request with access token")
 
-        val response = proceedWithAccessToken(chain, userTokenSet.accessToken)
+        val response: Response = proceedWithAccessToken(chain, userTokenSet.accessToken)
 
-        return if (response.code() == HttpStatus.UNAUTHORIZED.value()) {
+        return if (response.code == HttpStatus.UNAUTHORIZED.value()) {
             // in case of a 401, let's check if our token has expired and refresh if needed.
             refreshTokensAndTryAgain(
                 userTokenSet,
