@@ -1,5 +1,5 @@
 # builder docker image
-FROM maven:3-openjdk-11 AS builder
+FROM maven:3-eclipse-temurin-17 AS builder
 
 # set up workdir
 WORKDIR /build
@@ -14,7 +14,7 @@ COPY ./profiles/prod /build/profiles/prod
 RUN mvn clean package spring-boot:repackage -Pprod
 
 # distributed docker image
-FROM openjdk:11-jre
+FROM eclipse-temurin:17.0.8_7-jre
 
 # expose server port
 EXPOSE 8080
