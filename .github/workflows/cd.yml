@@ -10,7 +10,7 @@ on:
 jobs:
   push_to_registry:
     name: Build & Push docker image to dockerhub
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-22.04
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -52,7 +52,7 @@ jobs:
   run_e2e_tests:
     needs: push_to_registry
     name: Run e2e tests
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-22.04
     steps:
       - name: Extract metadata to env variables
         uses: HSLdevcom/jore4-tools/github-actions/extract-metadata@extract-metadata-v1
