@@ -64,7 +64,7 @@ open class TokenVerificationService(
      */
     open fun parseAndVerifyAccessToken(accessToken: AccessToken): Jws<Claims> {
         try {
-            return jwtsParser.parseClaimsJws(accessToken.toString())
+            return jwtsParser.build().parseClaimsJws(accessToken.toString())
         } catch (ex: UnsupportedJwtException) {
             LOGGER.warn("Authorization attempt with unsupported JWT token.", ex)
             throw UnauthorizedException("Authorization attempt with unsupported JWT token")
