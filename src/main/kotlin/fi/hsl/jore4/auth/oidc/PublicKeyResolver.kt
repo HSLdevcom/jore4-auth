@@ -27,11 +27,15 @@ open class PublicKeyResolver(
     @Volatile
     private var jwkSet = JWKSet()
 
-    override fun resolveSigningKey(header: JwsHeader<out JwsHeader<*>>, claims: Claims): Key {
+    override fun resolveSigningKey(header: JwsHeader, claims: Claims): Key {
         return getPublicKey(header)
     }
 
-    override fun resolveSigningKey(header: JwsHeader<out JwsHeader<*>>, plaintext: String): Key {
+    override fun resolveSigningKey(header: JwsHeader, p1: ByteArray?): Key {
+        return getPublicKey(header)
+    }
+
+    fun resolveSigningKey(header: JwsHeader, plaintext: String): Key {
         return getPublicKey(header)
     }
 
@@ -42,7 +46,7 @@ open class PublicKeyResolver(
      *
      * Note that only RSA keys are currently supported.
      */
-    private fun getPublicKey(header: JwsHeader<out JwsHeader<*>>): Key {
+    private fun getPublicKey(header: JwsHeader): Key {
         val keyId = header[JwsHeader.KEY_ID] as String? ?: throw KeyException("Could not find key id")
 
         var key = jwkSet.getKeyByKeyId(keyId)
