@@ -1,14 +1,16 @@
-name: Push image to Docker hub and run e2e tests
+name: Run unit tests, push image to Docker hub and run e2e tests
 
 on:
-  push:
-    branches:
-      - main
   pull_request:
   workflow_dispatch:
 
 jobs:
+  run_unit_tests:
+    name: Run unit tests
+    uses: ./.github/workflows/ci.yml
+
   push_to_registry:
+    needs: run_unit_tests
     name: Build & Push docker image to dockerhub
     runs-on: ubuntu-22.04
     steps:
@@ -50,7 +52,9 @@ jobs:
           docker push $IMAGE_NAME:latest
 
   run_e2e_tests:
-    needs: push_to_registry
+    needs:
+      - run_unit_tests
+      - push_to_registry
     name: Run e2e tests
     runs-on: ubuntu-22.04
     steps:
