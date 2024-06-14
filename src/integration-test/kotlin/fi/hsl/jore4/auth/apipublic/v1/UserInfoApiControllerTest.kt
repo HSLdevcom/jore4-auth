@@ -45,12 +45,10 @@ import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Tag
 import org.junit.jupiter.api.Test
-import org.junit.jupiter.api.extension.ExtendWith
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.mock.web.MockHttpSession
-import org.springframework.test.context.junit.jupiter.SpringExtension
 import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath
@@ -59,7 +57,6 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPat
  * NB: This test class formally tests {@code UserInfoApiController} functionality. However, in reality most of the
  * features tested originate from the {@code OIDCAuthInterceptor}.
  */
-@ExtendWith(SpringExtension::class)
 @SpringBootTest(classes = [IntegrationTestContext::class])
 @AutoConfigureMockMvc
 @Tag(TestTags.INTEGRATION_TEST)

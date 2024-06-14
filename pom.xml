@@ -11,7 +11,7 @@
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
-        <version>2.7.18</version>
+        <version>3.3.0</version>
         <relativePath/>
     </parent>
 
@@ -23,17 +23,15 @@
 
         <!-- Dependency versions -->
         <!-- Maven plugins -->
-        <!-- We need to update Spring boot, before we can update the OpenApi generator -->
-        <versions.maven.openapi>5.4.0</versions.maven.openapi>
+        <versions.maven.openapi>7.6.0</versions.maven.openapi>
         <versions.maven.build-helper>3.6.0</versions.maven.build-helper>
         <versions.maven.enforcer>3.5.0</versions.maven.enforcer>
 
         <!-- Library versions -->
-        <!-- Retrofit cannot be upgraded past 2.9 without upgrading kotlin, which needs newer Spring boot -->
-        <versions.retrofit>2.9.0</versions.retrofit>
+        <versions.retrofit>2.11.0</versions.retrofit>
         <versions.oauth2-oidc-sdk>11.12</versions.oauth2-oidc-sdk>
         <versions.jsonwebtoken>0.12.5</versions.jsonwebtoken>
-        <versions.springfox>3.0.0</versions.springfox>
+        <versions.springdoc>2.5.0</versions.springdoc>
         <versions.wiremock>3.6.0</versions.wiremock>
         <versions.mockito>5.12.0</versions.mockito>
 
@@ -110,6 +108,9 @@
                         </goals>
                         <configuration>
                             <inputSpec>${project.basedir}/src/main/openapi/api.yaml</inputSpec>
+                            <!-- We cannot use the kotlin-spring generator as it does not support masking for the
+                                 string password-format. And it generated DTOs as data classes which
+                                 cannot be extended. Thus there is no way to implement SafeUserInfoApiDTO class -->
                             <generatorName>spring</generatorName>
                             <modelPackage>fi.hsl.jore4.auth.apipublic.v1.model</modelPackage>
                             <modelNameSuffix>ApiDTO</modelNameSuffix>
@@ -120,11 +121,12 @@
                             <generateModelDocumentation>false</generateModelDocumentation>
                             <generateSupportingFiles>true</generateSupportingFiles>
                             <configOptions>
-                                <library>spring-mvc</library>
+                                <library>spring-boot</library>
                                 <dateLibrary>java8</dateLibrary>
                                 <delegatePattern>true</delegatePattern>
                                 <interfaceOnly>true</interfaceOnly>
                                 <openApiNullable>false</openApiNullable>
+                                <useSpringBoot3>true</useSpringBoot3>
                             </configOptions>
                         </configuration>
                     </execution>
@@ -217,7 +219,6 @@
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
                 <configuration>
-                    <fork>true</fork>
                     <mainClass>${start.class}</mainClass>
                 </configuration>
                 <executions>
@@ -287,17 +288,17 @@
             <version>${versions.jsonwebtoken}</version>
         </dependency>
         <dependency>
-            <groupId>io.springfox</groupId>
-            <artifactId>springfox-swagger2</artifactId>
-            <version>${versions.springfox}</version>
+            <groupId>org.springdoc</groupId>
+            <artifactId>springdoc-openapi-starter-webmvc-ui</artifactId>
+            <version>${versions.springdoc}</version>
         </dependency>
         <dependency>
-            <groupId>javax.xml.bind</groupId>
-            <artifactId>jaxb-api</artifactId>
+            <groupId>jakarta.xml.bind</groupId>
+            <artifactId>jakarta.xml.bind-api</artifactId>
         </dependency>
         <dependency>
-            <groupId>javax.validation</groupId>
-            <artifactId>validation-api</artifactId>
+            <groupId>jakarta.validation</groupId>
+            <artifactId>jakarta.validation-api</artifactId>
         </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>
