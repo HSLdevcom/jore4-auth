@@ -10,7 +10,7 @@ For more information on OpenID Connect, please see
 ## How to run locally
 
 1. Install preliminaries
-    - OpenJDK 11
+    - OpenJDK 17
 1. Make a copy of the maven `dev`-profile for your user:
     ```
     cp profiles/dev/config.properties profiles/dev/config.<my-username>.properties
