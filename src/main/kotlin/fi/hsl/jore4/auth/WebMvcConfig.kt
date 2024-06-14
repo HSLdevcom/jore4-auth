@@ -12,11 +12,7 @@ open class WebMvcConfig : WebMvcConfigurer {
 
     private val SWAGGER_RESOURCE_LOCATION = "classpath:/public/"
 
-    override fun addResourceHandlers(registry: ResourceHandlerRegistry?) {
-        if (registry == null) {
-            return
-        }
-
+    override fun addResourceHandlers(registry: ResourceHandlerRegistry) {
         registry.addResourceHandler("/api-specs/**")
             .addResourceLocations("${SWAGGER_RESOURCE_LOCATION}api-specs/")
     }

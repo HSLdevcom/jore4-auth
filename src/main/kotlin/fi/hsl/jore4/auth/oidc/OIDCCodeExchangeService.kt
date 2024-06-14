@@ -15,7 +15,7 @@ import org.springframework.beans.factory.annotation.Value
 import org.springframework.stereotype.Service
 import java.net.URI
 import javax.naming.AuthenticationException
-import javax.servlet.http.HttpSession
+import jakarta.servlet.http.HttpSession
 
 /**
  * Provides the functionality for exchanging an OIDC authorization code for tokens.

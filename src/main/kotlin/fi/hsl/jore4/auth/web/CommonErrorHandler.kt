@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.ControllerAdvice
 import org.springframework.web.bind.annotation.ExceptionHandler
 import org.springframework.web.bind.annotation.ResponseStatus
 import javax.naming.AuthenticationException
-import javax.validation.ConstraintViolationException
+import jakarta.validation.ConstraintViolationException
 
 /**
  * Provides error handler methods that return custom error messages back to client.
