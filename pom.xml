@@ -16,6 +16,16 @@
     </parent>
 
     <properties>
+        <!-- 3.6.3 is the last version of maven 3 that has been relased. Back in 2019 😬 -->
+        <maven-enforcer.plugin.mvn-min-version>3.6.3</maven-enforcer.plugin.mvn-min-version>
+
+        <!-- Dependency versions -->
+        <!-- Maven plugins -->
+        <!-- We need to update Spring boot, before we can update the OpenApi generator -->
+        <versions.maven.openapi>5.4.0</versions.maven.openapi>
+        <versions.maven.build-helper>3.6.0</versions.maven.build-helper>
+        <versions.maven.enforcer>3.5.0</versions.maven.enforcer>
+
         <kotlin.compiler.incremental>true</kotlin.compiler.incremental>
 
         <build.profile.id>dev</build.profile.id>
@@ -81,7 +91,7 @@
             <plugin>
                 <groupId>org.openapitools</groupId>
                 <artifactId>openapi-generator-maven-plugin</artifactId>
-                <version>5.1.1</version>
+                <version>${versions.maven.openapi}</version>
                 <executions>
                     <execution>
                         <goals>
@@ -112,7 +122,7 @@
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>build-helper-maven-plugin</artifactId>
-                <version>3.2.0</version>
+                <version>${versions.maven.build-helper}</version>
                 <executions>
                     <execution>
                         <id>add-api-spec-resources</id>
@@ -169,7 +179,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-enforcer-plugin</artifactId>
-                <version>3.0.0-M3</version>
+                <version>${versions.maven.enforcer}</version>
                 <executions>
                     <execution>
                         <id>enforce-versions</id>
@@ -179,9 +189,9 @@
                         <configuration>
                             <rules>
                                 <requireMavenVersion>
-                                    <message>You are running an older version of Maven. Maven >= 3.3.9 is required
+                                    <message>You are running an older version of Maven. Maven >= ${maven-enforcer.plugin.mvn-min-version} is required
                                     </message>
-                                    <version>[3.3.9,)</version>
+                                    <version>[${maven-enforcer.plugin.mvn-min-version},)</version>
                                 </requireMavenVersion>
                                 <requireJavaVersion>
                                     <message>You are running an incompatible version of Java. JDK 11 is required</message>
