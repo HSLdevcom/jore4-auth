@@ -2,13 +2,13 @@ package fi.hsl.jore4.auth.apipublic.v1
 
 import fi.hsl.jore4.auth.common.ApiUtil.createRedirect
 import fi.hsl.jore4.auth.oidc.OIDCLoginService
+import fi.hsl.jore4.auth.web.UnauthorizedException
+import jakarta.servlet.http.HttpServletRequest
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
-import jakarta.servlet.http.HttpServletRequest
-import fi.hsl.jore4.auth.web.UnauthorizedException
 
 /**
  * Endpoint to log the user in.
@@ -17,9 +17,8 @@ import fi.hsl.jore4.auth.web.UnauthorizedException
 @RequestMapping("\${api.path.prefix}/public/v1")
 open class OIDCLoginApiController(
     private val oidcLoginService: OIDCLoginService,
-    private val request: HttpServletRequest
+    private val request: HttpServletRequest,
 ) : LoginApi {
-
     companion object {
         private val LOGGER: Logger = LoggerFactory.getLogger(OIDCLoginApiController::class.java)
     }

@@ -17,9 +17,8 @@ import java.security.KeyException
  */
 @Component
 open class PublicKeyResolver(
-    private val oidcProviderMetadataSupplier: OIDCProviderMetadataSupplier
+    private val oidcProviderMetadataSupplier: OIDCProviderMetadataSupplier,
 ) : SigningKeyResolver {
-
     companion object {
         private val LOGGER: Logger = LoggerFactory.getLogger(PublicKeyResolver::class.java)
     }
@@ -27,15 +26,24 @@ open class PublicKeyResolver(
     @Volatile
     private var jwkSet = JWKSet()
 
-    override fun resolveSigningKey(header: JwsHeader, claims: Claims): Key {
+    override fun resolveSigningKey(
+        header: JwsHeader,
+        claims: Claims,
+    ): Key {
         return getPublicKey(header)
     }
 
-    override fun resolveSigningKey(header: JwsHeader, p1: ByteArray?): Key {
+    override fun resolveSigningKey(
+        header: JwsHeader,
+        p1: ByteArray?,
+    ): Key {
         return getPublicKey(header)
     }
 
-    fun resolveSigningKey(header: JwsHeader, plaintext: String): Key {
+    fun resolveSigningKey(
+        header: JwsHeader,
+        plaintext: String,
+    ): Key {
         return getPublicKey(header)
     }
 

@@ -2,12 +2,12 @@ package fi.hsl.jore4.auth.apipublic.v1
 
 import fi.hsl.jore4.auth.common.ApiUtil.createRedirect
 import fi.hsl.jore4.auth.oidc.OIDCLoginService
+import jakarta.servlet.http.HttpServletRequest
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
-import jakarta.servlet.http.HttpServletRequest
 
 /**
  * Endpoint to log the user out.
@@ -16,9 +16,8 @@ import jakarta.servlet.http.HttpServletRequest
 @RequestMapping("\${api.path.prefix}/public/v1")
 open class OIDCLogoutApiController(
     private val loginService: OIDCLoginService,
-    private val request: HttpServletRequest
+    private val request: HttpServletRequest,
 ) : LogoutApi {
-
     companion object {
         private val LOGGER: Logger = LoggerFactory.getLogger(OIDCLogoutApiController::class.java)
     }

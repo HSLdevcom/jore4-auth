@@ -1,12 +1,12 @@
 package fi.hsl.jore4.auth.oidc
 
-import org.springframework.context.event.ContextRefreshedEvent
-import org.springframework.context.event.EventListener
 import com.nimbusds.oauth2.sdk.id.Issuer
 import com.nimbusds.openid.connect.sdk.op.OIDCProviderConfigurationRequest
 import com.nimbusds.openid.connect.sdk.op.OIDCProviderMetadata
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
+import org.springframework.context.event.ContextRefreshedEvent
+import org.springframework.context.event.EventListener
 import org.springframework.stereotype.Component
 
 /**
@@ -14,7 +14,7 @@ import org.springframework.stereotype.Component
  */
 @Component
 open class OIDCProviderMetadataSupplier(
-    private val oidcProperties: OIDCProperties
+    private val oidcProperties: OIDCProperties,
 ) {
     companion object {
         private val LOGGER: Logger = LoggerFactory.getLogger(OIDCProviderMetadataSupplier::class.java)

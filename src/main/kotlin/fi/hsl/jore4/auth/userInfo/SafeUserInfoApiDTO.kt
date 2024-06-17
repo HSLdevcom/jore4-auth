@@ -12,7 +12,6 @@ import fi.hsl.jore4.auth.apipublic.v1.model.UserInfoApiDTO
  * logging system, which could mask sensitive data in a better way.
  */
 class SafeUserInfoApiDTO : UserInfoApiDTO() {
-
     override fun toString() =
         UserInfoApiDTO()
             .also {

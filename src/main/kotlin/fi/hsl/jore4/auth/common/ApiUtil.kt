@@ -7,7 +7,10 @@ import java.net.URI
 
 object ApiUtil {
     fun createRedirect(uri: URI) =
-        ResponseEntity<Void>(HttpHeaders().apply {
-            location = uri
-        }, HttpStatus.FOUND)
+        ResponseEntity<Void>(
+            HttpHeaders().apply {
+                location = uri
+            },
+            HttpStatus.FOUND,
+        )
 }

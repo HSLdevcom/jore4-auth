@@ -17,7 +17,7 @@ import org.springframework.stereotype.Service
 @Service
 open class UserInfoService(
     private val oidcProviderMetadataSupplier: OIDCProviderMetadataSupplier,
-    oidcAuthInterceptor: OIDCAuthInterceptor
+    oidcAuthInterceptor: OIDCAuthInterceptor,
 ) {
     companion object {
         private val LOGGER: Logger = LoggerFactory.getLogger(UserInfoService::class.java)
@@ -29,9 +29,10 @@ open class UserInfoService(
         private const val EXT_PERMISSIONS_CLAIM = "https://oneportal.trivore.com/claims/active_external_permissions"
     }
 
-    private val httpClient = OkHttpClient.Builder()
-        .addInterceptor(oidcAuthInterceptor)  // use interceptor to add authorization information to request
-        .build()
+    private val httpClient =
+        OkHttpClient.Builder()
+            .addInterceptor(oidcAuthInterceptor) // use interceptor to add authorization information to request
+            .build()
 
     /**
      * Retrieve the currently logged in user's user info.
@@ -41,13 +42,16 @@ open class UserInfoService(
     open fun getUserInfo(): UserInfoApiDTO {
         LOGGER.debug("Fetching user info...")
 
-        val response = httpClient
-            .newCall(Request.Builder()
-                .addHeader("Accept", "application/json;charset=UTF-8")
-                .get()
-                .url(oidcProviderMetadataSupplier.providerMetadata.userInfoEndpointURI.toURL())
-                .build())
-            .execute()
+        val response =
+            httpClient
+                .newCall(
+                    Request.Builder()
+                        .addHeader("Accept", "application/json;charset=UTF-8")
+                        .get()
+                        .url(oidcProviderMetadataSupplier.providerMetadata.userInfoEndpointURI.toURL())
+                        .build(),
+                )
+                .execute()
 
         // If the response was not successful, we'll assume the user was not authorized to make the call. Reasons
         // for the user not being authorized may be
@@ -62,27 +66,28 @@ open class UserInfoService(
             throw UnauthorizedException("Could not retrieve user info")
         }
 
-        val userInfo: SafeUserInfoApiDTO  // use SafeUserInfoApiDTO to ensure toString() won't leak sensitive data
+        val userInfo: SafeUserInfoApiDTO // use SafeUserInfoApiDTO to ensure toString() won't leak sensitive data
 
         try {
             val result: Map<String, Any> =
                 ObjectMapper().readValue(response.body!!.string(), HashMap<String, Any>().javaClass)
 
-            userInfo = SafeUserInfoApiDTO().apply {
-                id = result[ID_CLAIM].toString()
-                fullName = result[FULL_NAME_CLAIM]?.toString()
-                givenName = result[GIVEN_NAME_CLAIM]?.toString()
-                familyName = result[FAMILY_NAME_CLAIM]?.toString()
+            userInfo =
+                SafeUserInfoApiDTO().apply {
+                    id = result[ID_CLAIM].toString()
+                    fullName = result[FULL_NAME_CLAIM]?.toString()
+                    givenName = result[GIVEN_NAME_CLAIM]?.toString()
+                    familyName = result[FAMILY_NAME_CLAIM]?.toString()
 
-                // we can suppress the unchecked cast warning, since we're only interested in whether an exception
-                // is thrown in case of a cast failure (which will result in us throwing an UnauthorizedException)
-                @Suppress("UNCHECKED_CAST")
-                permissions = (result[EXT_PERMISSIONS_CLAIM] as Map<String, ArrayList<Map<String, String>>>)["active"]!!
-                    .map { extPermission -> checkNotNull(extPermission["permissionExternalId"]) }
-                    .distinct()
-            }
-        }
-        catch (ex: Exception) {
+                    // we can suppress the unchecked cast warning, since we're only interested in whether an exception
+                    // is thrown in case of a cast failure (which will result in us throwing an UnauthorizedException)
+                    @Suppress("UNCHECKED_CAST")
+                    permissions =
+                        (result[EXT_PERMISSIONS_CLAIM] as Map<String, ArrayList<Map<String, String>>>)["active"]!!
+                            .map { extPermission -> checkNotNull(extPermission["permissionExternalId"]) }
+                            .distinct()
+                }
+        } catch (ex: Exception) {
             response.close()
             // if any part of parsing or interpreting the user info claims goes wrong, respond with 401 Unauthorized
             throw UnauthorizedException("Could not parse user info")

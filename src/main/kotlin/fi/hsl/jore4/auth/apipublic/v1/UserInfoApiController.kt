@@ -14,9 +14,8 @@ import org.springframework.web.bind.annotation.RestController
 @RestController
 @RequestMapping("\${api.path.prefix}/public/v1")
 open class UserInfoApiController(
-    private val userInfoService: UserInfoService
+    private val userInfoService: UserInfoService,
 ) : UserInfoApi {
-
     companion object {
         val LOGGER: Logger = LoggerFactory.getLogger(UserInfoApiController::class.java)
     }

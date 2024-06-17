@@ -18,9 +18,8 @@ import javax.naming.AuthenticationException
  */
 class UserTokenSet(
     val accessToken: AccessToken,
-    val refreshToken: RefreshToken
+    val refreshToken: RefreshToken,
 ) : Serializable {
-
     companion object {
         private val LOGGER = LoggerFactory.getLogger(UserTokenSet::class.java)
     }
@@ -28,15 +27,20 @@ class UserTokenSet(
     /**
      * Refresh the access and refresh tokens.
      */
-    fun refresh(tokenEndpointURI: URI, clientID: ClientID, clientSecret: Secret): UserTokenSet {
+    fun refresh(
+        tokenEndpointURI: URI,
+        clientID: ClientID,
+        clientSecret: Secret,
+    ): UserTokenSet {
         LOGGER.debug("Refreshing tokens...")
 
         // create the token request based on the refresh token
-        val request = TokenRequest(
-            tokenEndpointURI,
-            ClientSecretBasic(clientID, clientSecret),
-            RefreshTokenGrant(refreshToken)
-        )
+        val request =
+            TokenRequest(
+                tokenEndpointURI,
+                ClientSecretBasic(clientID, clientSecret),
+                RefreshTokenGrant(refreshToken),
+            )
 
         val response = TokenResponse.parse(request.toHTTPRequest().send())
 
