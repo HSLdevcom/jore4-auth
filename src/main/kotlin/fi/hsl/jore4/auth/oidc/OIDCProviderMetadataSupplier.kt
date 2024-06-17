@@ -42,7 +42,7 @@ open class OIDCProviderMetadataSupplier(
         val response = request.toHTTPRequest().send()
 
         // parse the metadata
-        val opMetadata = OIDCProviderMetadata.parse(response.contentAsJSONObject)
+        val opMetadata = OIDCProviderMetadata.parse(response.bodyAsJSONObject)
 
         if (opMetadata.issuer != issuer) throw IllegalStateException("Invalid OIDC issuer")
 
