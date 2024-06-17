@@ -9,7 +9,6 @@ import org.springframework.boot.jdbc.DataSourceBuilder
 import org.springframework.context.annotation.Bean
 import javax.sql.DataSource
 
-
 /**
  * Spring boot application definition.
  */
@@ -21,12 +20,16 @@ open class Jore4AuthApplication(
     @ConditionalOnProperty(prefix = "session", name = ["enabled"])
     open fun getDataSource(): DataSource {
         databaseProperties.assertAllGood()
-        return DataSourceBuilder.create()
-            .driverClassName("org.postgresql.Driver")
-            .url("jdbc:postgresql://${databaseProperties.hostname}:${databaseProperties.port}/${databaseProperties.name}?currentSchema=${databaseProperties.sessionSchema}")
-            .username(databaseProperties.username)
-            .password(databaseProperties.password)
-            .build()
+        with(databaseProperties) {
+            return DataSourceBuilder.create()
+                .driverClassName("org.postgresql.Driver")
+                .url(
+                    "jdbc:postgresql://$hostname:$port/$name?currentSchema=$sessionSchema"
+                )
+                .username(username)
+                .password(password)
+                .build()
+        }
     }
 }
 

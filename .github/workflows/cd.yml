@@ -9,8 +9,14 @@ jobs:
     name: Run unit tests
     uses: ./.github/workflows/ci.yml
 
+  check_code_formatting:
+    name: Check code is formatted with ktlint
+    uses: ./.github/workflows/ktlint.yml
+
   push_to_registry:
-    needs: run_unit_tests
+    needs:
+      - run_unit_tests
+      - check_code_formatting
     name: Build & Push docker image to dockerhub
     runs-on: ubuntu-22.04
     steps:
@@ -54,6 +60,7 @@ jobs:
   run_e2e_tests:
     needs:
       - run_unit_tests
+      - check_code_formatting
       - push_to_registry
     name: Run e2e tests
     runs-on: ubuntu-22.04

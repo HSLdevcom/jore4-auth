@@ -19,18 +19,19 @@ import org.springframework.stereotype.Service
  */
 @Service
 open class TokenVerificationService(
-        publicKeyResolver: PublicKeyResolver,
-        private val oidcProperties: OIDCProperties,
-        private val oidcProviderMetadataSupplier: OIDCProviderMetadataSupplier
+    publicKeyResolver: PublicKeyResolver,
+    private val oidcProperties: OIDCProperties,
+    private val oidcProviderMetadataSupplier: OIDCProviderMetadataSupplier
 ) {
     companion object {
         private val LOGGER = LoggerFactory.getLogger(TokenVerificationService::class.java)
     }
 
-    private val jwtsParser = Jwts.parser()
-        .setSigningKeyResolver(publicKeyResolver)
-        .requireIssuer(oidcProperties.providerBaseUrl)
-        .requireAudience(oidcProperties.clientId)
+    private val jwtsParser =
+        Jwts.parser()
+            .setSigningKeyResolver(publicKeyResolver)
+            .requireIssuer(oidcProperties.providerBaseUrl)
+            .requireAudience(oidcProperties.clientId)
 
     /**
      * Verify the access token found in the given {@param userTokenSet}.
@@ -44,10 +45,12 @@ open class TokenVerificationService(
             parseAndVerifyAccessToken(userTokenSet.accessToken)
             null
         } catch (expiredEx: ExpiredJwtException) {
-            val newTokenSet = userTokenSet.refresh(
-                oidcProviderMetadataSupplier.providerMetadata.tokenEndpointURI,
-                ClientID(oidcProperties.clientId), Secret(oidcProperties.clientSecret),
-            )
+            val newTokenSet =
+                userTokenSet.refresh(
+                    oidcProviderMetadataSupplier.providerMetadata.tokenEndpointURI,
+                    ClientID(oidcProperties.clientId),
+                    Secret(oidcProperties.clientSecret)
+                )
             // retry to verify the new access token
             parseAndVerifyAccessToken(newTokenSet.accessToken)
             newTokenSet
