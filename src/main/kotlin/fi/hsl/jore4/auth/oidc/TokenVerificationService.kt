@@ -9,8 +9,8 @@ import io.jsonwebtoken.ExpiredJwtException
 import io.jsonwebtoken.Jws
 import io.jsonwebtoken.Jwts
 import io.jsonwebtoken.MalformedJwtException
-import io.jsonwebtoken.SignatureException
 import io.jsonwebtoken.UnsupportedJwtException
+import io.jsonwebtoken.security.SignatureException
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
 
@@ -19,7 +19,7 @@ import org.springframework.stereotype.Service
  */
 @Service
 open class TokenVerificationService(
-    publicKeyResolver: PublicKeyResolver,
+    publicKeyLocator: PublicKeyLocator,
     private val oidcProperties: OIDCProperties,
     private val oidcProviderMetadataSupplier: OIDCProviderMetadataSupplier,
 ) {
@@ -29,7 +29,7 @@ open class TokenVerificationService(
 
     private val jwtsParser =
         Jwts.parser()
-            .setSigningKeyResolver(publicKeyResolver)
+            .keyLocator(publicKeyLocator)
             .requireIssuer(oidcProperties.providerBaseUrl)
             .requireAudience(oidcProperties.clientId)
 
@@ -67,7 +67,7 @@ open class TokenVerificationService(
      */
     open fun parseAndVerifyAccessToken(accessToken: AccessToken): Jws<Claims> {
         try {
-            return jwtsParser.build().parseClaimsJws(accessToken.toString())
+            return jwtsParser.build().parseSignedClaims(accessToken.toString())
         } catch (ex: UnsupportedJwtException) {
             LOGGER.warn("Authorization attempt with unsupported JWT token.", ex)
             throw UnauthorizedException("Authorization attempt with unsupported JWT token")

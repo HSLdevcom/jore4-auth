@@ -11,7 +11,6 @@ import com.nimbusds.oauth2.sdk.auth.Secret
 import com.nimbusds.oauth2.sdk.id.ClientID
 import fi.hsl.jore4.auth.oidc.OIDCAuthInterceptor
 import io.jsonwebtoken.Jwts
-import io.jsonwebtoken.SignatureAlgorithm
 import org.springframework.http.MediaType
 import java.lang.IllegalStateException
 import java.net.URLEncoder
@@ -167,19 +166,19 @@ object MockOIDCProvider {
         keyId: String = Constants.OIDC_PROVIDER_SIGNING_KEY_ID,
         audience: String = Constants.OIDC_CLIENT_ID
     ): String {
-
-        val signatureAlgorithm = SignatureAlgorithm.RS256
         val signingKey = JWK.parse(Constants.OIDC_PROVIDER_SIGNING_KEY)
             .toRSAKey()
             .toRSAPrivateKey()
 
         return Jwts.builder()
-            .setIssuedAt(Date(issuedAt))
-            .setExpiration(Date(expiresAt))
-            .setIssuer(issuer)
-            .setHeaderParam("kid", keyId)
+            .issuedAt(Date(issuedAt))
+            .expiration(Date(expiresAt))
+            .issuer(issuer)
+            .header()
+            .add("kid", keyId)
+            .and()
             .claim("aud", audience)
-            .signWith(signatureAlgorithm, signingKey)
+            .signWith(signingKey)
             .compact()
     }
 
