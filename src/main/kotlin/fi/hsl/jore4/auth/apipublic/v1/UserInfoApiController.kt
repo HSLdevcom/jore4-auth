@@ -16,7 +16,6 @@ import org.springframework.web.bind.annotation.RestController
 open class UserInfoApiController(
     private val userInfoService: UserInfoService
 ) : UserInfoApi {
-
     companion object {
         val LOGGER: Logger = LoggerFactory.getLogger(UserInfoApiController::class.java)
     }

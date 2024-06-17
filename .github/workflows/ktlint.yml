@@ -1,12 +1,11 @@
-name: Run unit tests
-
+name: 'ktlint'
 on:
   # this workflow is only called by others, won't be executed on itself
   workflow_call:
 
 jobs:
-  tests:
-    name: Run auth backend tests
+  spotless:
+    name: Check code is formatted with ktlint
     runs-on: ubuntu-22.04
 
     steps:
@@ -28,5 +27,5 @@ jobs:
           key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}
           restore-keys: ${{ runner.os }}-m2
 
-      - name: Run tests
-        run: mvn clean verify -Pall-tests
+      - name: Run ktlint Check
+        run: mvn ktlint:check
