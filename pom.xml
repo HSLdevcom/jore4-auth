@@ -26,6 +26,7 @@
         <versions.maven.openapi>7.6.0</versions.maven.openapi>
         <versions.maven.build-helper>3.6.0</versions.maven.build-helper>
         <versions.maven.enforcer>3.5.0</versions.maven.enforcer>
+        <versions.maven.ktlint>3.2.0</versions.maven.ktlint>
 
         <!-- Library versions -->
         <versions.retrofit>2.11.0</versions.retrofit>
@@ -225,6 +226,23 @@
                     <execution>
                         <goals>
                             <goal>repackage</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <plugin>
+                <groupId>com.github.gantsign.maven</groupId>
+                <artifactId>ktlint-maven-plugin</artifactId>
+                <version>${versions.maven.ktlint}</version>
+                <executions>
+                    <execution>
+                        <id>check</id>
+                        <configuration>
+                            <sourceRoots>${project.build.sourceDirectory}/fi</sourceRoots>
+                        </configuration>
+                        <goals>
+                            <goal>check</goal>
                         </goals>
                     </execution>
                 </executions>

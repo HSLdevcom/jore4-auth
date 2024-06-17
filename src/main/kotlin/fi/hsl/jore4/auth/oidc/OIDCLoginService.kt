@@ -6,13 +6,13 @@ import com.nimbusds.oauth2.sdk.id.ClientID
 import com.nimbusds.oauth2.sdk.id.State
 import com.nimbusds.openid.connect.sdk.AuthenticationRequest
 import fi.hsl.jore4.auth.apipublic.v1.OIDCCodeExchangeApiController
+import jakarta.servlet.http.HttpSession
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.stereotype.Service
 import org.springframework.web.util.UriComponentsBuilder
 import java.net.URI
-import jakarta.servlet.http.HttpSession
 
 /**
  * Login and logout functionality.
@@ -41,16 +41,17 @@ open class OIDCLoginService(
         val state = State()
 
         // generate the redirect URI at which the user will authenticate
-        val authRequestUri = AuthenticationRequest.Builder(
-            ResponseType(OIDC_RESPONSE_TYPE),
-            Scope(*OIDC_SCOPES),
-            ClientID(oidcProperties.clientId),
-            oidcCodeExchangeApiController.callbackUri
-        )
-            .endpointURI(oidcProviderMetadataSupplier.providerMetadata.authorizationEndpointURI)
-            .state(state)
-            .build()
-            .toURI()
+        val authRequestUri =
+            AuthenticationRequest.Builder(
+                ResponseType(OIDC_RESPONSE_TYPE),
+                Scope(*OIDC_SCOPES),
+                ClientID(oidcProperties.clientId),
+                oidcCodeExchangeApiController.callbackUri
+            )
+                .endpointURI(oidcProviderMetadataSupplier.providerMetadata.authorizationEndpointURI)
+                .state(state)
+                .build()
+                .toURI()
 
         session.setAttribute(SessionKeys.OIDC_STATE_KEY, state)
 
@@ -65,12 +66,13 @@ open class OIDCLoginService(
     open fun createLogoutUri(): URI {
         LOGGER.debug("Creating logout URI...")
 
-        val logoutUri = UriComponentsBuilder.fromUri(oidcProviderMetadataSupplier.providerMetadata.endSessionEndpointURI)
-            .queryParam("client_id", oidcProperties.clientId)
-            .queryParam("post_logout_redirect_uri", logoutPageUrl)
-            .build()
-            .encode()
-            .toUri()
+        val logoutUri =
+            UriComponentsBuilder.fromUri(oidcProviderMetadataSupplier.providerMetadata.endSessionEndpointURI)
+                .queryParam("client_id", oidcProperties.clientId)
+                .queryParam("post_logout_redirect_uri", logoutPageUrl)
+                .build()
+                .encode()
+                .toUri()
 
         LOGGER.debug("Created logout URI {}", logoutUri)
 

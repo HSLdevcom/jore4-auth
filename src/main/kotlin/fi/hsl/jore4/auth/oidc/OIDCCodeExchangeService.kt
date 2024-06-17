@@ -9,13 +9,13 @@ import com.nimbusds.oauth2.sdk.id.ClientID
 import com.nimbusds.oauth2.sdk.id.State
 import com.nimbusds.openid.connect.sdk.OIDCTokenResponse
 import com.nimbusds.openid.connect.sdk.OIDCTokenResponseParser
+import jakarta.servlet.http.HttpSession
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.stereotype.Service
 import java.net.URI
 import javax.naming.AuthenticationException
-import jakarta.servlet.http.HttpSession
 
 /**
  * Provides the functionality for exchanging an OIDC authorization code for tokens.
@@ -42,7 +42,10 @@ open class OIDCCodeExchangeService(
      * configured login page URL, if no redirect URl is passed.
      */
     open fun exchangeCodeAndRedirect(
-        code: AuthorizationCode, state: State, session: HttpSession, callbackUri: URI
+        code: AuthorizationCode,
+        state: State,
+        session: HttpSession,
+        callbackUri: URI
     ): URI {
         LOGGER.debug("Exchanging code for tokens...")
 
@@ -54,11 +57,12 @@ open class OIDCCodeExchangeService(
         session.removeAttribute(SessionKeys.OIDC_STATE_KEY)
 
         // create the token request based on the auth code
-        val request = TokenRequest(
-            oidcProviderMetadataSupplier.providerMetadata.tokenEndpointURI,
-            ClientSecretBasic(ClientID(oidcProperties.clientId), Secret(oidcProperties.clientSecret)),
-            AuthorizationCodeGrant(code, callbackUri)
-        )
+        val request =
+            TokenRequest(
+                oidcProviderMetadataSupplier.providerMetadata.tokenEndpointURI,
+                ClientSecretBasic(ClientID(oidcProperties.clientId), Secret(oidcProperties.clientSecret)),
+                AuthorizationCodeGrant(code, callbackUri)
+            )
         val response = OIDCTokenResponseParser.parse(request.toHTTPRequest().send())
 
         if (!response.indicatesSuccess()) {

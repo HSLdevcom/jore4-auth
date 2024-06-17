@@ -1,6 +1,7 @@
 package fi.hsl.jore4.auth.web
 
 import io.jsonwebtoken.ExpiredJwtException
+import jakarta.validation.ConstraintViolationException
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.http.HttpStatus
@@ -8,14 +9,12 @@ import org.springframework.web.bind.annotation.ControllerAdvice
 import org.springframework.web.bind.annotation.ExceptionHandler
 import org.springframework.web.bind.annotation.ResponseStatus
 import javax.naming.AuthenticationException
-import jakarta.validation.ConstraintViolationException
 
 /**
  * Provides error handler methods that return custom error messages back to client.
  */
 @ControllerAdvice
 open class CommonErrorHandler {
-
     companion object {
         val LOGGER: Logger = LoggerFactory.getLogger(CommonErrorHandler::class.java)
     }

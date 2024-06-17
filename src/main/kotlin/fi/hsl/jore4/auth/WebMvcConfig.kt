@@ -9,8 +9,9 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer
  */
 @Configuration
 open class WebMvcConfig : WebMvcConfigurer {
-
-    private val SWAGGER_RESOURCE_LOCATION = "classpath:/public/"
+    companion object {
+        private const val SWAGGER_RESOURCE_LOCATION = "classpath:/public/"
+    }
 
     override fun addResourceHandlers(registry: ResourceHandlerRegistry) {
         registry.addResourceHandler("/api-specs/**")

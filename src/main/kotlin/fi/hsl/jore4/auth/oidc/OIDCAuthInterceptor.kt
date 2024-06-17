@@ -18,7 +18,6 @@ import java.lang.Exception
 class OIDCAuthInterceptor(
     private val verificationService: TokenVerificationService
 ) : Interceptor {
-
     companion object {
         private val LOGGER = LoggerFactory.getLogger(OIDCAuthInterceptor::class.java)
 
@@ -30,9 +29,14 @@ class OIDCAuthInterceptor(
      * Proceed with the given interceptor {@param chain} after the given {@param accessToken}
      * has been added as an authorization header.
      */
-    private fun proceedWithAccessToken(chain: Interceptor.Chain, accessToken: AccessToken): Response =
+    private fun proceedWithAccessToken(
+        chain: Interceptor.Chain,
+        accessToken: AccessToken
+    ): Response =
         chain.proceed(
-            chain.request().newBuilder()
+            chain
+                .request()
+                .newBuilder()
                 .addHeader(AUTHORIZATION_HEADER, "$AUTHORIZATION_BEARER_PREFIX$accessToken")
                 .build()
         )
@@ -54,7 +58,9 @@ class OIDCAuthInterceptor(
                 LOGGER.debug("Re-sending request with updated access token")
                 // if the token set was updated
                 sendNewRequest(newTokenSet)
-            } else null  // access token was not updated
+            } else {
+                null // access token was not updated
+            }
         } catch (ex: Exception) {
             null
         }
@@ -65,7 +71,8 @@ class OIDCAuthInterceptor(
      * Use {@param storeUserTokenSet} to store a new token set in case it is updated along the way.
      */
     private fun proceedWithTokenSet(
-        chain: Interceptor.Chain, userTokenSet: UserTokenSet,
+        chain: Interceptor.Chain,
+        userTokenSet: UserTokenSet,
         storeUserTokenSet: (UserTokenSet) -> Unit
     ): Response {
         LOGGER.debug("Sending request with access token")
@@ -82,8 +89,10 @@ class OIDCAuthInterceptor(
                     // retry with the new access token
                     proceedWithAccessToken(chain, newTokenSet.accessToken)
                 }
-            ) ?: response  // return original response if the token set was not refreshed (successfully)
-        } else response  // return original response if the reply was NOT 401 unauthorized
+            ) ?: response // return original response if the token set was not refreshed (successfully)
+        } else {
+            response // return original response if the reply was NOT 401 unauthorized
+        }
     }
 
     /**
@@ -103,9 +112,14 @@ class OIDCAuthInterceptor(
         return if (userTokenSet == null) {
             LOGGER.debug("Could not resolve user tokens, sending request without authorization header")
             chain.proceed(chain.request())
-        } else proceedWithTokenSet(
-            chain, userTokenSet,
-            storeUserTokenSet = { newTokenSet -> session.setAttribute(SessionKeys.USER_TOKEN_SET_KEY, newTokenSet) }
-        )
+        } else {
+            proceedWithTokenSet(
+                chain,
+                userTokenSet,
+                storeUserTokenSet = { newTokenSet ->
+                    session.setAttribute(SessionKeys.USER_TOKEN_SET_KEY, newTokenSet)
+                }
+            )
+        }
     }
 }

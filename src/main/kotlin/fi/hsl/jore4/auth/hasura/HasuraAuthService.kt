@@ -3,10 +3,10 @@ package fi.hsl.jore4.auth.hasura
 import fi.hsl.jore4.auth.apipublic.v1.model.SessionApiDTO
 import fi.hsl.jore4.auth.userInfo.UserInfoService
 import fi.hsl.jore4.auth.web.UnauthorizedException
+import jakarta.servlet.http.HttpServletRequest
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
-import jakarta.servlet.http.HttpServletRequest
 
 /**
  * Hasura authorization.
@@ -20,7 +20,7 @@ open class HasuraAuthService(
 
         const val REQUESTED_ROLE_HEADER = "x-hasura-role"
 
-        private const val SESSION_EXPIRATION_TIME_SEC = 30  // Our response is valid for this time
+        private const val SESSION_EXPIRATION_TIME_SEC = 30 // Our response is valid for this time
         const val CACHE_CONTROL_SPEC = "max-age=$SESSION_EXPIRATION_TIME_SEC"
     }
 
@@ -38,8 +38,9 @@ open class HasuraAuthService(
     open fun getSession(request: HttpServletRequest): SessionApiDTO {
         LOGGER.debug("Fetching Hasura session data")
 
-        val requestedRole = request.getHeader(REQUESTED_ROLE_HEADER)
-            ?: throw UnauthorizedException("Requested role not specified in request headers")
+        val requestedRole =
+            request.getHeader(REQUESTED_ROLE_HEADER)
+                ?: throw UnauthorizedException("Requested role not specified in request headers")
 
         val userInfo = userInfoService.getUserInfo()
         LOGGER.debug("Got user info {}", userInfo)
@@ -49,11 +50,12 @@ open class HasuraAuthService(
         }
 
         // The requested role was found among the user permissions, so grant the role in the response
-        val session = SessionApiDTO().apply {
-            xHasuraUserId(userInfo.id)
-            xHasuraRole(requestedRole)
-            cacheControl = CACHE_CONTROL_SPEC
-        }
+        val session =
+            SessionApiDTO().apply {
+                xHasuraUserId(userInfo.id)
+                xHasuraRole(requestedRole)
+                cacheControl = CACHE_CONTROL_SPEC
+            }
 
         LOGGER.debug("Fetched Hasura session data {}", session)
         return session
