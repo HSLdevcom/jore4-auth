@@ -2,9 +2,9 @@ package fi.hsl.jore4.auth.oidc
 
 import com.nimbusds.jose.jwk.JWKSet
 import com.nimbusds.jose.jwk.KeyType
-import io.jsonwebtoken.Claims
+import io.jsonwebtoken.Header
 import io.jsonwebtoken.JwsHeader
-import io.jsonwebtoken.SigningKeyResolver
+import io.jsonwebtoken.Locator
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Component
@@ -16,34 +16,26 @@ import java.security.KeyException
  * the key to the used JWT parser.
  */
 @Component
-open class PublicKeyResolver(
+open class PublicKeyLocator(
     private val oidcProviderMetadataSupplier: OIDCProviderMetadataSupplier
-) : SigningKeyResolver {
+) : Locator<Key> {
     companion object {
-        private val LOGGER: Logger = LoggerFactory.getLogger(PublicKeyResolver::class.java)
+        private val LOGGER: Logger = LoggerFactory.getLogger(PublicKeyLocator::class.java)
+
+        private fun resolveHeaderType(header: Header?) = header?.javaClass?.canonicalName ?: "null"
     }
 
     @Volatile
     private var jwkSet = JWKSet()
 
-    override fun resolveSigningKey(
-        header: JwsHeader,
-        claims: Claims
-    ): Key {
-        return getPublicKey(header)
-    }
+    /**
+     * Resolve the public key that is referenced in the given JWS {@header}.
+     */
+    override fun locate(header: Header?): Key {
+        require(
+            header is JwsHeader
+        ) { "Header must be of type JwsHeader, but it was of type '${resolveHeaderType(header)}'!" }
 
-    override fun resolveSigningKey(
-        header: JwsHeader,
-        p1: ByteArray?
-    ): Key {
-        return getPublicKey(header)
-    }
-
-    fun resolveSigningKey(
-        header: JwsHeader,
-        plaintext: String
-    ): Key {
         return getPublicKey(header)
     }
 
@@ -55,7 +47,7 @@ open class PublicKeyResolver(
      * Note that only RSA keys are currently supported.
      */
     private fun getPublicKey(header: JwsHeader): Key {
-        val keyId = header[JwsHeader.KEY_ID] as String? ?: throw KeyException("Could not find key id")
+        val keyId = header.keyId ?: throw KeyException("Could not find key id")
 
         var key = jwkSet.getKeyByKeyId(keyId)
 
