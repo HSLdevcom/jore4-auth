@@ -21,8 +21,8 @@ For more information on OpenID Connect, please see
     ```
     mvn clean spring-boot:run -Pdev
     ```
-   
-## How to run with docker-compose
+
+## How to run with docker compose
 
 ```
 development.sh start
