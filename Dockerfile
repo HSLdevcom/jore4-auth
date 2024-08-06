@@ -14,7 +14,7 @@ COPY ./profiles/prod /build/profiles/prod
 RUN mvn clean package spring-boot:repackage -Pprod
 
 # distributed docker image
-FROM eclipse-temurin:17.0.8_7-jre
+FROM eclipse-temurin:21.0.4_7-jre
 
 # expose server port
 EXPOSE 8080
