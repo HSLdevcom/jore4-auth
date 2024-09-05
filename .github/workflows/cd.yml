@@ -21,7 +21,7 @@ jobs:
       - run_unit_tests
       - check_code_formatting
     name: Build & Push docker image to dockerhub
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-24.04
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -66,6 +66,9 @@ jobs:
       - check_code_formatting
       - push_to_registry
     name: Run e2e tests
+    # These must run on ubuntu 22.04 or older.
+    # The MS SQL server used by jore4-jore3-importer,
+    # does not run on Linux kernels newer than 6.6.x.
     runs-on: ubuntu-22.04
     steps:
       - name: Extract metadata to env variables
