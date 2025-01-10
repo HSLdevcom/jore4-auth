@@ -37,19 +37,19 @@ function run_tests {
 
 function usage {
   echo "
-  Usage $(basename "$0") <command>
+  Usage: $(basename "$0") <command>
 
   build
     Build the project locally
 
   start
-    Start auth service and testdb in Docker container
+    Start Docker containers for authentication service and test database
 
   stop
-    Stop auth Docker containers
+    Stop Docker containers
 
   remove
-    Stop and remove auth Docker containers
+    Stop and remove Docker containers
 
   test
     Run tests locally
