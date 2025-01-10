@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-set -eo pipefail
+set -euo pipefail
 
 # allow running from any working directory
 WD=$(dirname "$0")
@@ -13,17 +13,14 @@ function download_docker_compose_bundle {
 }
 
 function start {
-  download_docker_compose_bundle
   $DOCKER_COMPOSE_CMD up --build -d jore4-auth jore4-testdb
 }
 
 function stop_all {
-  download_docker_compose_bundle
   $DOCKER_COMPOSE_CMD stop
 }
 
 function remove_all {
-  download_docker_compose_bundle
   $DOCKER_COMPOSE_CMD down
 }
 
@@ -59,11 +56,16 @@ function print_usage {
   "
 }
 
-if [[ -z ${1} ]]; then
+COMMAND=${1:-}
+
+if [[ -z $COMMAND ]]; then
   print_usage
-else
-  case $1 in
+  exit 1
+fi
+
+case $COMMAND in
   start)
+    download_docker_compose_bundle
     start
     ;;
 
@@ -88,7 +90,9 @@ else
     ;;
 
   *)
+    echo ""
+    echo "Unknown command: '${COMMAND}'"
     print_usage
+    exit 1
     ;;
-  esac
-fi
+esac
