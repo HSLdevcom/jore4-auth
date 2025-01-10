@@ -8,22 +8,22 @@ cd "${WD}"
 
 DOCKER_COMPOSE_CMD="docker compose -f ./docker/docker-compose.yml -f ./docker/docker-compose.custom.yml"
 
-function check_docker {
+function download_docker_compose_bundle {
   curl https://raw.githubusercontent.com/HSLdevcom/jore4-tools/main/docker/download-docker-bundle.sh | bash
 }
 
 function start {
-  check_docker
+  download_docker_compose_bundle
   $DOCKER_COMPOSE_CMD up --build -d jore4-auth jore4-testdb
 }
 
 function stop_all {
-  check_docker
+  download_docker_compose_bundle
   $DOCKER_COMPOSE_CMD stop
 }
 
 function remove_all {
-  check_docker
+  download_docker_compose_bundle
   $DOCKER_COMPOSE_CMD down
 }
 
@@ -35,7 +35,7 @@ function run_tests {
   mvn test
 }
 
-function usage {
+function print_usage {
   echo "
   Usage: $(basename "$0") <command>
 
@@ -60,7 +60,7 @@ function usage {
 }
 
 if [[ -z ${1} ]]; then
-  usage
+  print_usage
 else
   case $1 in
   start)
@@ -88,7 +88,7 @@ else
     ;;
 
   *)
-    usage
+    print_usage
     ;;
   esac
 fi
