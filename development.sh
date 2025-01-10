@@ -40,7 +40,7 @@ function run_tests {
 
 function usage {
   echo "
-  Usage $(basename $0) <command>
+  Usage $(basename "$0") <command>
 
   build
     Build the project locally
