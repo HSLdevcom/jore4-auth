@@ -85,27 +85,27 @@ download_docker_compose_bundle() {
   echo "$commit_sha" > ./docker/RELEASE_VERSION.txt
 }
 
-function start {
+start() {
   $DOCKER_COMPOSE_CMD up --build -d jore4-auth jore4-testdb
 }
 
-function stop_all {
+stop_all() {
   $DOCKER_COMPOSE_CMD stop
 }
 
-function remove_all {
+remove_all() {
   $DOCKER_COMPOSE_CMD down
 }
 
-function build {
+build() {
   mvn install
 }
 
-function run_tests {
+run_tests() {
   mvn test
 }
 
-function print_usage {
+print_usage() {
   echo "
   Usage: $(basename "$0") <command>
 
