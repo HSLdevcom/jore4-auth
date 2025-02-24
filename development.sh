@@ -85,8 +85,12 @@ download_docker_compose_bundle() {
   echo "$commit_sha" > ./docker/RELEASE_VERSION.txt
 }
 
-start() {
-  $DOCKER_COMPOSE_CMD up --build -d jore4-auth jore4-testdb
+start_test_database() {
+  $DOCKER_COMPOSE_CMD up -d jore4-testdb
+}
+
+start_app() {
+  $DOCKER_COMPOSE_CMD up --build -d jore4-auth
 }
 
 stop_all() {
@@ -108,6 +112,15 @@ run_tests() {
 print_usage() {
   echo "
   Usage: $(basename "$0") <command>
+
+  start:deps
+    Start the test database as a Docker container, which is a dependency for the
+    app itself.
+
+    You can control which version of the Docker Compose bundle is downloaded by
+    passing a commit reference to the jore4-docker-compose-bundle repository via
+    the BUNDLE_REF environment variable. By default, the latest version is
+    downloaded.
 
   start
     Start Docker containers for authentication service and test database.
@@ -142,9 +155,15 @@ if [[ -z $COMMAND ]]; then
 fi
 
 case $COMMAND in
+  start:deps)
+    download_docker_compose_bundle
+    start_test_database
+    ;;
+
   start)
     download_docker_compose_bundle
-    start
+    start_test_database
+    start_app
     ;;
 
   build)
