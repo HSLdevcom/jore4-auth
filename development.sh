@@ -109,9 +109,6 @@ print_usage() {
   echo "
   Usage: $(basename "$0") <command>
 
-  build
-    Build the project locally.
-
   start
     Start Docker containers for authentication service and test database.
 
@@ -120,14 +117,17 @@ print_usage() {
     the BUNDLE_REF environment variable. By default, the latest version is
     downloaded.
 
+  build
+    Build the project locally.
+
+  test
+    Run tests locally.
+
   stop
     Stop Docker containers.
 
   remove
     Stop and remove Docker containers.
-
-  test
-    Run tests locally.
 
   help
     Show this usage information.
@@ -147,6 +147,14 @@ case $COMMAND in
     start
     ;;
 
+  build)
+    build
+    ;;
+
+  test)
+    run_tests
+    ;;
+
   stop)
     stop_all
     ;;
@@ -157,14 +165,6 @@ case $COMMAND in
 
   help)
     print_usage
-    ;;
-
-  build)
-    build
-    ;;
-
-  test)
-    run_tests
     ;;
 
   *)
