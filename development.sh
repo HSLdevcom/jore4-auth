@@ -102,11 +102,11 @@ remove_all() {
 }
 
 build() {
-  mvn install
+  mvn clean install
 }
 
 run_tests() {
-  mvn test
+  mvn clean test
 }
 
 print_usage() {
