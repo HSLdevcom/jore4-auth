@@ -20,6 +20,5 @@ class SafeUserInfoApiDTO : UserInfoApiDTO() {
                 it.familyName = "XXX"
                 it.fullName = "XXX"
                 it.permissions = this.permissions
-            }
-            .toString()
+            }.toString()
 }

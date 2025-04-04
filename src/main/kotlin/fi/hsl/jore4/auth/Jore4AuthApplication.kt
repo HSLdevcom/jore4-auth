@@ -21,12 +21,12 @@ open class Jore4AuthApplication(
     open fun getDataSource(): DataSource {
         databaseProperties.assertAllGood()
         with(databaseProperties) {
-            return DataSourceBuilder.create()
+            return DataSourceBuilder
+                .create()
                 .driverClassName("org.postgresql.Driver")
                 .url(
                     "jdbc:postgresql://$hostname:$port/$name?currentSchema=$sessionSchema"
-                )
-                .username(username)
+                ).username(username)
                 .password(password)
                 .build()
         }

@@ -28,7 +28,8 @@ open class TokenVerificationService(
     }
 
     private val jwtsParser =
-        Jwts.parser()
+        Jwts
+            .parser()
             .keyLocator(publicKeyLocator)
             .requireIssuer(oidcProperties.providerBaseUrl)
             .requireAudience(oidcProperties.clientId)
@@ -40,8 +41,8 @@ open class TokenVerificationService(
      *
      * @return The new token set if the token set was refreshed, null otherwise.
      */
-    open fun verifyOrRefreshTokens(userTokenSet: UserTokenSet): UserTokenSet? {
-        return try {
+    open fun verifyOrRefreshTokens(userTokenSet: UserTokenSet): UserTokenSet? =
+        try {
             parseAndVerifyAccessToken(userTokenSet.accessToken)
             null
         } catch (expiredEx: ExpiredJwtException) {
@@ -55,7 +56,6 @@ open class TokenVerificationService(
             parseAndVerifyAccessToken(newTokenSet.accessToken)
             newTokenSet
         }
-    }
 
     /**
      * Verify the {@param accessToken} and parses its claims.
