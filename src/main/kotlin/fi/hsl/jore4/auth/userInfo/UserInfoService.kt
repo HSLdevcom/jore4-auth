@@ -30,7 +30,8 @@ open class UserInfoService(
     }
 
     private val httpClient =
-        OkHttpClient.Builder()
+        OkHttpClient
+            .Builder()
             .addInterceptor(oidcAuthInterceptor) // use interceptor to add authorization information to request
             .build()
 
@@ -45,13 +46,13 @@ open class UserInfoService(
         val response =
             httpClient
                 .newCall(
-                    Request.Builder()
+                    Request
+                        .Builder()
                         .addHeader("Accept", "application/json;charset=UTF-8")
                         .get()
                         .url(oidcProviderMetadataSupplier.providerMetadata.userInfoEndpointURI.toURL())
                         .build()
-                )
-                .execute()
+                ).execute()
 
         // If the response was not successful, we'll assume the user was not authorized to make the call. Reasons
         // for the user not being authorized may be

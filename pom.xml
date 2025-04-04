@@ -23,18 +23,18 @@
 
         <!-- Dependency versions -->
         <!-- Maven plugins -->
-        <versions.maven.openapi>7.6.0</versions.maven.openapi>
+        <versions.maven.openapi>7.12.0</versions.maven.openapi>
         <versions.maven.build-helper>3.6.0</versions.maven.build-helper>
         <versions.maven.enforcer>3.5.0</versions.maven.enforcer>
-        <versions.maven.ktlint>3.2.0</versions.maven.ktlint>
+        <versions.maven.ktlint>3.5.0</versions.maven.ktlint>
 
         <!-- Library versions -->
         <versions.retrofit>2.11.0</versions.retrofit>
-        <versions.oauth2-oidc-sdk>11.12</versions.oauth2-oidc-sdk>
-        <versions.jsonwebtoken>0.12.5</versions.jsonwebtoken>
-        <versions.springdoc>2.5.0</versions.springdoc>
-        <versions.wiremock>3.6.0</versions.wiremock>
-        <versions.mockito>5.12.0</versions.mockito>
+        <versions.oauth2-oidc-sdk>11.23.1</versions.oauth2-oidc-sdk>
+        <versions.jsonwebtoken>0.12.6</versions.jsonwebtoken>
+        <versions.springdoc>2.6.0</versions.springdoc>
+        <versions.wiremock>3.12.1</versions.wiremock>
+        <versions.mockito>5.17.0</versions.mockito>
 
         <kotlin.compiler.incremental>true</kotlin.compiler.incremental>
 

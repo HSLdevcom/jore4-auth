@@ -14,7 +14,8 @@ open class WebMvcConfig : WebMvcConfigurer {
     }
 
     override fun addResourceHandlers(registry: ResourceHandlerRegistry) {
-        registry.addResourceHandler("/api-specs/**")
+        registry
+            .addResourceHandler("/api-specs/**")
             .addResourceLocations("${SWAGGER_RESOURCE_LOCATION}api-specs/")
     }
 }

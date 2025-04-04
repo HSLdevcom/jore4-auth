@@ -42,13 +42,13 @@ open class OIDCLoginService(
 
         // generate the redirect URI at which the user will authenticate
         val authRequestUri =
-            AuthenticationRequest.Builder(
-                ResponseType(OIDC_RESPONSE_TYPE),
-                Scope(*OIDC_SCOPES),
-                ClientID(oidcProperties.clientId),
-                oidcCodeExchangeApiController.callbackUri
-            )
-                .endpointURI(oidcProviderMetadataSupplier.providerMetadata.authorizationEndpointURI)
+            AuthenticationRequest
+                .Builder(
+                    ResponseType(OIDC_RESPONSE_TYPE),
+                    Scope(*OIDC_SCOPES),
+                    ClientID(oidcProperties.clientId),
+                    oidcCodeExchangeApiController.callbackUri
+                ).endpointURI(oidcProviderMetadataSupplier.providerMetadata.authorizationEndpointURI)
                 .state(state)
                 .build()
                 .toURI()
@@ -67,7 +67,8 @@ open class OIDCLoginService(
         LOGGER.debug("Creating logout URI...")
 
         val logoutUri =
-            UriComponentsBuilder.fromUri(oidcProviderMetadataSupplier.providerMetadata.endSessionEndpointURI)
+            UriComponentsBuilder
+                .fromUri(oidcProviderMetadataSupplier.providerMetadata.endSessionEndpointURI)
                 .queryParam("client_id", oidcProperties.clientId)
                 .queryParam("post_logout_redirect_uri", logoutPageUrl)
                 .build()
