@@ -1,4 +1,4 @@
-name: Run unit tests, push image to Docker hub and run e2e tests
+name: CD
 
 on:
   push:
