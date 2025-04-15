@@ -16,7 +16,7 @@ jobs:
     name: Check code is formatted with ktlint
     uses: ./.github/workflows/ktlint.yml
 
-  push_to_registry:
+  publish_docker_image_to_docker_hub:
     needs:
       - run_unit_tests
       - check_code_formatting
@@ -80,7 +80,7 @@ jobs:
     needs:
       - run_unit_tests
       - check_code_formatting
-      - push_to_registry
+      - publish_docker_image_to_docker_hub
     name: Run e2e tests
     runs-on: ubuntu-24.04
     steps:
