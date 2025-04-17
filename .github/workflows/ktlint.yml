@@ -19,7 +19,7 @@ jobs:
           java-package: jdk
           architecture: x64
           distribution: temurin
-          cahce: maven
+          cache: maven
 
       - name: Run ktlint Check
         run: mvn ktlint:check
