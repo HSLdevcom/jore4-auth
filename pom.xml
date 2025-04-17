@@ -32,7 +32,7 @@
         <versions.retrofit>2.11.0</versions.retrofit>
         <versions.oauth2-oidc-sdk>11.23.1</versions.oauth2-oidc-sdk>
         <versions.jsonwebtoken>0.12.6</versions.jsonwebtoken>
-        <versions.springdoc>2.6.0</versions.springdoc>
+        <versions.springdoc>2.8.6</versions.springdoc>
         <versions.wiremock>3.12.1</versions.wiremock>
         <versions.mockito>5.17.0</versions.mockito>
 
