@@ -20,7 +20,7 @@ jobs:
           java-package: jdk
           architecture: x64
           distribution: temurin
-          cahce: maven
+          cache: maven
 
       - name: Run tests
         run: mvn clean verify -Pall-tests
