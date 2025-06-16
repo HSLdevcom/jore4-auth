@@ -34,14 +34,11 @@ jobs:
       azure_subscription_id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
 
   run_e2e_tests:
+    name: Run E2E tests
     needs:
       - run_unit_tests
       - check_code_formatting
       - publish_docker_image_to_acr
-    name: Run e2e tests
-    runs-on: ubuntu-24.04
-    steps:
-      - name: Run e2e tests
-        uses: HSLdevcom/jore4-tools/github-actions/run-ci@main
-        with:
-          auth_version: "${{ needs.publish_docker_image_to_acr.outputs.docker_image }}"
+    uses: HSLdevcom/jore4-tools/.github/workflows/shared-run-e2e.yml@main
+    with:
+      auth_version: "${{ needs.publish_docker_image_to_acr.outputs.docker_image }}"
