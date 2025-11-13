@@ -79,14 +79,9 @@ open class UserInfoService(
                     fullName = result[FULL_NAME_CLAIM]?.toString()
                     givenName = result[GIVEN_NAME_CLAIM]?.toString()
                     familyName = result[FAMILY_NAME_CLAIM]?.toString()
-
-                    // we can suppress the unchecked cast warning, since we're only interested in whether an exception
-                    // is thrown in case of a cast failure (which will result in us throwing an UnauthorizedException)
-                    @Suppress("UNCHECKED_CAST")
-                    permissions =
-                        (result[EXT_PERMISSIONS_CLAIM] as Map<String, ArrayList<Map<String, String>>>)["active"]!!
-                            .map { extPermission -> checkNotNull(extPermission["permissionExternalId"]) }
-                            .distinct()
+                    // At the time of writing (2025-11) permissions are not really used; UI only checks that
+                    // permissions list is not empty and Hasura uses hard coded role "admin"
+                    permissions = listOf("admin")
                 }
         } catch (ex: Exception) {
             response.close()
