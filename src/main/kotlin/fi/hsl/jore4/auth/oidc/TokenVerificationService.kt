@@ -52,8 +52,11 @@ open class TokenVerificationService(
                     ClientID(oidcProperties.clientId),
                     Secret(oidcProperties.clientSecret)
                 )
-            // retry to verify the new access token
-            parseAndVerifyAccessToken(newTokenSet.accessToken)
+            // retry to verify the new access token if not using Entra, as it uses an unverifiable internal token
+            // See https://learn.microsoft.com/en-us/entra/identity-platform/access-tokens#validate-tokens
+            if (!oidcProperties.providerBaseUrl.startsWith("https://login.microsoftonline.com/")) {
+                parseAndVerifyAccessToken(newTokenSet.accessToken)
+            }
             newTokenSet
         }
 

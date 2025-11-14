@@ -2,6 +2,7 @@ package fi.hsl.jore4.auth.oidc
 
 import com.nimbusds.oauth2.sdk.AuthorizationCode
 import com.nimbusds.oauth2.sdk.AuthorizationCodeGrant
+import com.nimbusds.oauth2.sdk.Scope
 import com.nimbusds.oauth2.sdk.TokenRequest
 import com.nimbusds.oauth2.sdk.auth.ClientSecretBasic
 import com.nimbusds.oauth2.sdk.auth.Secret
@@ -61,7 +62,8 @@ open class OIDCCodeExchangeService(
             TokenRequest(
                 oidcProviderMetadataSupplier.providerMetadata.tokenEndpointURI,
                 ClientSecretBasic(ClientID(oidcProperties.clientId), Secret(oidcProperties.clientSecret)),
-                AuthorizationCodeGrant(code, callbackUri)
+                AuthorizationCodeGrant(code, callbackUri),
+                Scope("openid")
             )
         val response = OIDCTokenResponseParser.parse(request.toHTTPRequest().send())
 
@@ -77,8 +79,11 @@ open class OIDCCodeExchangeService(
         val accessToken = successResponse.oidcTokens.accessToken
         val refreshToken = successResponse.oidcTokens.refreshToken
 
-        // verify token authenticity and validity
-        verificationService.parseAndVerifyAccessToken(accessToken)
+        // verify token authenticity and validity if not using Entra, as it uses an unverifiable internal token
+        // See https://learn.microsoft.com/en-us/entra/identity-platform/access-tokens#validate-tokens
+        if (!oidcProperties.providerBaseUrl.startsWith("https://login.microsoftonline.com/")) {
+            verificationService.parseAndVerifyAccessToken(accessToken)
+        }
 
         session.setAttribute(SessionKeys.USER_TOKEN_SET_KEY, UserTokenSet(accessToken, refreshToken))
 

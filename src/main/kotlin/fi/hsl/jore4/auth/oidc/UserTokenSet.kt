@@ -1,6 +1,7 @@
 package fi.hsl.jore4.auth.oidc
 
 import com.nimbusds.oauth2.sdk.RefreshTokenGrant
+import com.nimbusds.oauth2.sdk.Scope
 import com.nimbusds.oauth2.sdk.TokenRequest
 import com.nimbusds.oauth2.sdk.TokenResponse
 import com.nimbusds.oauth2.sdk.auth.ClientSecretBasic
@@ -39,7 +40,8 @@ class UserTokenSet(
             TokenRequest(
                 tokenEndpointURI,
                 ClientSecretBasic(clientID, clientSecret),
-                RefreshTokenGrant(refreshToken)
+                RefreshTokenGrant(refreshToken),
+                Scope("openid")
             )
 
         val response = TokenResponse.parse(request.toHTTPRequest().send())
