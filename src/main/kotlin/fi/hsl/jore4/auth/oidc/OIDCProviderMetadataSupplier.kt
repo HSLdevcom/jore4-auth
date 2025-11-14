@@ -34,8 +34,8 @@ open class OIDCProviderMetadataSupplier(
     fun updateProviderMetadata() {
         LOGGER.info("Updating OIDC provider metadata...")
 
-        // the OpenID provider issuer URL
-        val issuer = Issuer(oidcProperties.providerBaseUrl)
+        // the OpenID provider issuer URL. Use provider base url if it is not defined
+        val issuer = Issuer(oidcProperties.issuer.ifEmpty { oidcProperties.providerBaseUrl })
 
         // fetch the OpenID provider metadata from the discovery endpoint
         val request = OIDCProviderConfigurationRequest(issuer)

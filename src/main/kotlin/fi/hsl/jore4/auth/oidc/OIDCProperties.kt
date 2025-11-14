@@ -12,4 +12,5 @@ open class OIDCProperties {
     lateinit var clientId: String
     lateinit var clientSecret: String
     lateinit var providerBaseUrl: String
+    lateinit var issuer: String
 }
