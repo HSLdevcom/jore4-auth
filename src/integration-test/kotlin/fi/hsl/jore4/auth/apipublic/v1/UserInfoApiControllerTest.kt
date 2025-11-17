@@ -24,8 +24,6 @@ import fi.hsl.jore4.auth.Constants.RO_USER_LAST_NAME
 import fi.hsl.jore4.auth.Constants.RO_USER_SUB
 import fi.hsl.jore4.auth.Constants.RW_USER_EXT_PERMISSION_1_EXT_ID
 import fi.hsl.jore4.auth.Constants.RW_USER_EXT_PERMISSION_1_ID
-import fi.hsl.jore4.auth.Constants.RW_USER_EXT_PERMISSION_2_EXT_ID
-import fi.hsl.jore4.auth.Constants.RW_USER_EXT_PERMISSION_2_ID
 import fi.hsl.jore4.auth.Constants.RW_USER_FIRST_NAME
 import fi.hsl.jore4.auth.Constants.RW_USER_FULL_NAME
 import fi.hsl.jore4.auth.Constants.RW_USER_LAST_NAME
@@ -339,8 +337,7 @@ class UserInfoApiControllerTest(
                 val newAccessToken = createJwtAccessToken()
                 val userInfoContent = MockOIDCProvider.createUserInfoResponseContent(
                     RW_USER_SUB, RW_USER_FIRST_NAME, RW_USER_LAST_NAME, RW_USER_FULL_NAME,
-                    Pair(RW_USER_EXT_PERMISSION_1_ID, RW_USER_EXT_PERMISSION_1_EXT_ID),
-                    Pair(RW_USER_EXT_PERMISSION_2_ID, RW_USER_EXT_PERMISSION_2_EXT_ID)
+                    Pair(RW_USER_EXT_PERMISSION_1_ID, RW_USER_EXT_PERMISSION_1_EXT_ID)
                 )
 
                 with(MockOIDCProvider) {
@@ -361,9 +358,8 @@ class UserInfoApiControllerTest(
                     .andExpect(jsonPath("$.fullName").value(RW_USER_FULL_NAME))
                     .andExpect(jsonPath("$.givenName").value(RW_USER_FIRST_NAME))
                     .andExpect(jsonPath("$.familyName").value(RW_USER_LAST_NAME))
-                    .andExpect(jsonPath("$.permissions.length()").value(2))
+                    .andExpect(jsonPath("$.permissions.length()").value(1))
                     .andExpect(jsonPath("$.permissions[0]").value(RW_USER_EXT_PERMISSION_1_EXT_ID))
-                    .andExpect(jsonPath("$.permissions[1]").value(RW_USER_EXT_PERMISSION_2_EXT_ID))
             }
         }
     }
