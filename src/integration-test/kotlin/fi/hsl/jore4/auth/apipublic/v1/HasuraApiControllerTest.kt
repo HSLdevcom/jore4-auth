@@ -38,8 +38,7 @@ class HasuraApiControllerTest(
     )
     private val rwUserInfoContent = MockOIDCProvider.createUserInfoResponseContent(
         Constants.RW_USER_SUB, Constants.RW_USER_FIRST_NAME, Constants.RW_USER_LAST_NAME, Constants.RW_USER_FULL_NAME,
-        Pair(Constants.RW_USER_EXT_PERMISSION_1_ID, Constants.RW_USER_EXT_PERMISSION_1_EXT_ID),
-        Pair(Constants.RW_USER_EXT_PERMISSION_2_ID, Constants.RW_USER_EXT_PERMISSION_2_EXT_ID)
+        Pair(Constants.RW_USER_EXT_PERMISSION_1_ID, Constants.RW_USER_EXT_PERMISSION_1_EXT_ID)
     )
 
     @BeforeEach
@@ -130,10 +129,10 @@ class HasuraApiControllerTest(
                 UserTokenSet(BearerAccessToken(accessToken), RefreshToken(Constants.OIDC_REFRESH_TOKEN))
             )
 
-            requestBuilder.webhook(session, Constants.RW_USER_EXT_PERMISSION_2_EXT_ID)
+            requestBuilder.webhook(session, Constants.RW_USER_EXT_PERMISSION_1_EXT_ID)
                 .andExpect(status().isOk)
                 .andExpect(jsonPath("$.X-Hasura-User-Id").value(Constants.RW_USER_SUB))
-                .andExpect(jsonPath("$.X-Hasura-Role").value(Constants.RW_USER_EXT_PERMISSION_2_EXT_ID))
+                .andExpect(jsonPath("$.X-Hasura-Role").value(Constants.RW_USER_EXT_PERMISSION_1_EXT_ID))
                 .andExpect(jsonPath("$.Cache-Control").value(HasuraAuthService.CACHE_CONTROL_SPEC))
         }
     }

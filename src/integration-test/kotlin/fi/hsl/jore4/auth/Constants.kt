@@ -195,16 +195,14 @@ object Constants {
     """
 
     const val RO_USER_EXT_PERMISSION_ID = "0123456789ABCDE"
-    const val RO_USER_EXT_PERMISSION_EXT_ID = "read-only"
+    const val RO_USER_EXT_PERMISSION_EXT_ID = "admin"
     const val RO_USER_SUB = "60643ec68823e65ee44a9050"
     const val RO_USER_FIRST_NAME = "Rita"
     const val RO_USER_LAST_NAME = "Readonly"
     const val RO_USER_FULL_NAME = "$RO_USER_FIRST_NAME Roswita $RO_USER_LAST_NAME"
 
     const val RW_USER_EXT_PERMISSION_1_ID = "123456789ABCDEFGH"
-    const val RW_USER_EXT_PERMISSION_1_EXT_ID = "RO"
-    const val RW_USER_EXT_PERMISSION_2_ID = "23456789ABCDEFGHIJ"
-    const val RW_USER_EXT_PERMISSION_2_EXT_ID = "read-and-write"
+    const val RW_USER_EXT_PERMISSION_1_EXT_ID = "admin"
     const val RW_USER_SUB = "13643ec68823e65ee4479432"
     const val RW_USER_FIRST_NAME = "Alicia"
     const val RW_USER_LAST_NAME = "Admin"
