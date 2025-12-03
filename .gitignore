@@ -9,3 +9,4 @@ auth-backend.iml
 docker/**
 !docker/docker-compose.custom.yml
 !docker/init-database.sh
+!docker/migrate-database.sh

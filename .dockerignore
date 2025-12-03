@@ -6,3 +6,4 @@
 !/profiles
 !/pom.xml
 !/read-secrets.sh
+!docker/migrate-database.sh
