@@ -1,5 +1,6 @@
 package fi.hsl.jore4.auth.oidc
 
+import com.fasterxml.jackson.databind.ObjectMapper
 import com.nimbusds.oauth2.sdk.AuthorizationCode
 import com.nimbusds.oauth2.sdk.AuthorizationCodeGrant
 import com.nimbusds.oauth2.sdk.Scope
@@ -10,9 +11,13 @@ import com.nimbusds.oauth2.sdk.id.ClientID
 import com.nimbusds.oauth2.sdk.id.State
 import com.nimbusds.openid.connect.sdk.OIDCTokenResponse
 import com.nimbusds.openid.connect.sdk.OIDCTokenResponseParser
+import fi.hsl.jore4.auth.audit.LoginAuditService
 import jakarta.servlet.http.HttpSession
+import okhttp3.OkHttpClient
+import okhttp3.Request
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
+import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.stereotype.Service
 import java.net.URI
@@ -28,9 +33,16 @@ open class OIDCCodeExchangeService(
     private val verificationService: TokenVerificationService,
     @Value("\${loginpage.url}") private val loginPageUrl: String
 ) {
+    @Autowired(required = false)
+    private var loginAuditService: LoginAuditService? = null
+
     companion object {
         private val LOGGER: Logger = LoggerFactory.getLogger(OIDCCodeExchangeService::class.java)
+        private const val SUB_CLAIM = "sub"
+        private const val NAME_CLAIM = "name"
     }
+
+    private val httpClient = OkHttpClient.Builder().build()
 
     /**
      * Exchange the given authorization {@param code} for an access and refresh token.
@@ -78,6 +90,7 @@ open class OIDCCodeExchangeService(
         // get the access token and refresh token
         val accessToken = successResponse.oidcTokens.accessToken
         val refreshToken = successResponse.oidcTokens.refreshToken
+        val idToken = successResponse.oidcTokens.idToken
 
         // verify token authenticity and validity if not using Entra, as it uses an unverifiable internal token
         // See https://learn.microsoft.com/en-us/entra/identity-platform/access-tokens#validate-tokens
@@ -87,6 +100,17 @@ open class OIDCCodeExchangeService(
 
         session.setAttribute(SessionKeys.USER_TOKEN_SET_KEY, UserTokenSet(accessToken, refreshToken))
 
+        // Record the login event in the audit log
+        try {
+            loginAuditService?.let {
+                val userId = idToken.jwtClaimsSet.subject
+                val userName = fetchUserNameFromUserInfo(accessToken.value, userId)
+                it.recordLogin(userId, userName)
+            }
+        } catch (e: Exception) {
+            LOGGER.warn("Could not record login audit", e)
+        }
+
         // redirect the user to the login page URL
         val redirectUri = URI.create(loginPageUrl)
 
@@ -94,4 +118,56 @@ open class OIDCCodeExchangeService(
 
         return redirectUri
     }
+
+    /**
+     * Fetch the user's name from the OIDC UserInfo endpoint.
+     */
+    private fun fetchUserNameFromUserInfo(
+        accessTokenValue: String,
+        expectedSub: String
+    ): String? =
+        runCatching {
+            val request =
+                Request
+                    .Builder()
+                    .addHeader("Authorization", "Bearer $accessTokenValue")
+                    .addHeader("Accept", "application/json")
+                    .get()
+                    .url(oidcProviderMetadataSupplier.providerMetadata.userInfoEndpointURI.toURL())
+                    .build()
+
+            httpClient
+                .newCall(request)
+                .execute()
+                .use { response ->
+                    if (!response.isSuccessful) {
+                        LOGGER.warn("Failed to fetch UserInfo, status: {}", response.code)
+                        return null
+                    }
+
+                    val responseBody =
+                        response.body?.string() ?: run {
+                            LOGGER.warn("UserInfo response body is null")
+                            return null
+                        }
+
+                    val result = ObjectMapper().readValue(responseBody, Map::class.java) as Map<*, *>
+
+                    // Verify that the sub claim matches the ID token's sub
+                    val userInfoSub = result[SUB_CLAIM]?.toString()
+                    if (userInfoSub != expectedSub) {
+                        LOGGER.error(
+                            "UserInfo sub claim '{}' does not match ID token sub '{}'.",
+                            userInfoSub,
+                            expectedSub
+                        )
+                        return null
+                    }
+
+                    result[NAME_CLAIM]?.toString()
+                }
+        }.getOrElse { e ->
+            LOGGER.warn("Error fetching user name from UserInfo endpoint", e)
+            null
+        }
 }
