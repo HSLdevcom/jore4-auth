@@ -10,9 +10,11 @@ import com.nimbusds.oauth2.sdk.id.ClientID
 import com.nimbusds.oauth2.sdk.id.State
 import com.nimbusds.openid.connect.sdk.OIDCTokenResponse
 import com.nimbusds.openid.connect.sdk.OIDCTokenResponseParser
+import fi.hsl.jore4.auth.audit.LoginAuditService
 import jakarta.servlet.http.HttpSession
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
+import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.stereotype.Service
 import java.net.URI
@@ -28,6 +30,9 @@ open class OIDCCodeExchangeService(
     private val verificationService: TokenVerificationService,
     @Value("\${loginpage.url}") private val loginPageUrl: String
 ) {
+    @Autowired(required = false)
+    private var loginAuditService: LoginAuditService? = null
+
     companion object {
         private val LOGGER: Logger = LoggerFactory.getLogger(OIDCCodeExchangeService::class.java)
     }
@@ -78,6 +83,7 @@ open class OIDCCodeExchangeService(
         // get the access token and refresh token
         val accessToken = successResponse.oidcTokens.accessToken
         val refreshToken = successResponse.oidcTokens.refreshToken
+        val idToken = successResponse.oidcTokens.idToken
 
         // verify token authenticity and validity if not using Entra, as it uses an unverifiable internal token
         // See https://learn.microsoft.com/en-us/entra/identity-platform/access-tokens#validate-tokens
@@ -86,6 +92,17 @@ open class OIDCCodeExchangeService(
         }
 
         session.setAttribute(SessionKeys.USER_TOKEN_SET_KEY, UserTokenSet(accessToken, refreshToken))
+
+        // Record the login event in the audit log
+        try {
+            loginAuditService?.let {
+                val userId = idToken.jwtClaimsSet.subject
+                val userName = idToken.jwtClaimsSet.getStringClaim("name")
+                it.recordLogin(userId, userName)
+            }
+        } catch (e: Exception) {
+            LOGGER.warn("Could not record login audit", e)
+        }
 
         // redirect the user to the login page URL
         val redirectUri = URI.create(loginPageUrl)
