@@ -18,7 +18,7 @@
     <properties>
         <java.version>17</java.version>
 
-        <!-- 3.6.3 is the last version of maven 3 that has been released. Back in 2019 😬 -->
+        <!-- 3.6.3 is the last version of maven 3 that has been released. Back in 2019 -->
         <maven-enforcer.plugin.mvn-min-version>3.6.3</maven-enforcer.plugin.mvn-min-version>
 
         <!-- Dependency versions -->
@@ -27,6 +27,7 @@
         <versions.maven.build-helper>3.6.0</versions.maven.build-helper>
         <versions.maven.enforcer>3.5.0</versions.maven.enforcer>
         <versions.maven.ktlint>3.5.0</versions.maven.ktlint>
+        <versions.maven.flyway>10.10.0</versions.maven.flyway>
 
         <!-- Library versions -->
         <versions.retrofit>2.11.0</versions.retrofit>
@@ -35,6 +36,7 @@
         <versions.springdoc>2.6.0</versions.springdoc>
         <versions.wiremock>3.12.1</versions.wiremock>
         <versions.mockito>5.17.0</versions.mockito>
+        <versions.postgresql>42.7.7</versions.postgresql>
 
         <kotlin.compiler.incremental>true</kotlin.compiler.incremental>
 
@@ -247,6 +249,29 @@
                     </execution>
                 </executions>
             </plugin>
+            <plugin>
+                <groupId>org.flywaydb</groupId>
+                <artifactId>flyway-maven-plugin</artifactId>
+                <version>${versions.maven.flyway}</version>
+                <dependencies>
+                    <dependency>
+                        <groupId>org.postgresql</groupId>
+                        <artifactId>postgresql</artifactId>
+                        <version>${versions.postgresql}</version>
+                    </dependency>
+                </dependencies>
+                <configuration>
+                    <url>jdbc:postgresql://localhost:6432/authdb</url>
+                    <user>dbauth</user>
+                    <password>authpassword</password>
+                    <schemas>
+                        <schema>public</schema>
+                    </schemas>
+                    <locations>
+                        <location>filesystem:src/main/resources/db/migration</location>
+                    </locations>
+                </configuration>
+            </plugin>
 
             <!-- plugins for testing -->
             <plugin>
@@ -288,6 +313,11 @@
             <groupId>org.jetbrains.kotlin</groupId>
             <artifactId>kotlin-stdlib</artifactId>
             <!-- version inherited from the Spring Boot parent POM -->
+            <version>${kotlin.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.jetbrains.kotlin</groupId>
+            <artifactId>kotlin-reflect</artifactId>
             <version>${kotlin.version}</version>
         </dependency>
         <dependency>
@@ -333,6 +363,14 @@
         <dependency>
             <groupId>org.postgresql</groupId>
             <artifactId>postgresql</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.flywaydb</groupId>
+            <artifactId>flyway-core</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.flywaydb</groupId>
+            <artifactId>flyway-database-postgresql</artifactId>
         </dependency>
 
         <!-- dependencies for testing -->
