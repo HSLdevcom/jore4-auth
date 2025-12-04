@@ -25,7 +25,7 @@ ADD https://raw.githubusercontent.com/HSLdevcom/jore4-tools/main/docker/read-sec
 # copy over compiled jar
 COPY --from=builder /build/target/*.jar /usr/src/jore4-auth/auth-backend.jar
 
-# read docker secrets into environment varaibles and run application
+# read docker secrets into environment variables and run application
 CMD /bin/bash -c "source /app/scripts/read-secrets.sh && java -jar /usr/src/jore4-auth/auth-backend.jar"
 
 HEALTHCHECK --interval=1m --timeout=5s \
