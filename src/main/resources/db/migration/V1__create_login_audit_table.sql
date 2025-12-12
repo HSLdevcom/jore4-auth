@@ -16,8 +16,8 @@ BEGIN
         GRANT SELECT, INSERT ON login_audit TO dbauth;
         GRANT USAGE, SELECT ON SEQUENCE login_audit_id_seq TO dbauth;
     END IF;
-    IF EXISTS (SELECT FROM pg_roles WHERE rolname = 'dbhasura') THEN
-        GRANT SELECT ON login_audit TO dbhasura;
-        GRANT USAGE, SELECT ON SEQUENCE login_audit_id_seq TO dbhasura;
+    IF EXISTS (SELECT FROM pg_roles WHERE rolname = '${dbHasuraUsername}') THEN
+        GRANT SELECT ON login_audit TO ${dbHasuraUsername};
+        GRANT USAGE, SELECT ON SEQUENCE login_audit_id_seq TO ${dbHasuraUsername};
     END IF;
 END $$;
