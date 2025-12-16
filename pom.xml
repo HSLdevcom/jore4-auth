@@ -23,20 +23,20 @@
 
         <!-- Dependency versions -->
         <!-- Maven plugins -->
-        <versions.maven.openapi>7.12.0</versions.maven.openapi>
-        <versions.maven.build-helper>3.6.0</versions.maven.build-helper>
-        <versions.maven.enforcer>3.5.0</versions.maven.enforcer>
+        <versions.maven.openapi>7.17.0</versions.maven.openapi>
+        <versions.maven.build-helper>3.6.1</versions.maven.build-helper>
+        <versions.maven.enforcer>3.6.2</versions.maven.enforcer>
         <versions.maven.ktlint>3.5.0</versions.maven.ktlint>
         <versions.maven.flyway>10.10.0</versions.maven.flyway>
 
         <!-- Library versions -->
         <versions.retrofit>2.11.0</versions.retrofit>
-        <versions.oauth2-oidc-sdk>11.23.1</versions.oauth2-oidc-sdk>
-        <versions.jsonwebtoken>0.12.6</versions.jsonwebtoken>
+        <versions.oauth2-oidc-sdk>11.30.1</versions.oauth2-oidc-sdk>
+        <versions.jsonwebtoken>0.13.0</versions.jsonwebtoken>
         <versions.springdoc>2.6.0</versions.springdoc>
-        <versions.wiremock>3.12.1</versions.wiremock>
-        <versions.mockito>5.17.0</versions.mockito>
-        <versions.postgresql>42.7.7</versions.postgresql>
+        <versions.wiremock>3.13.2</versions.wiremock>
+        <versions.mockito>5.21.0</versions.mockito>
+        <versions.postgresql>42.7.8</versions.postgresql>
 
         <kotlin.compiler.incremental>true</kotlin.compiler.incremental>
 
