@@ -2,17 +2,18 @@ package fi.hsl.jore4.auth.audit
 
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
-import org.springframework.boot.autoconfigure.condition.ConditionalOnBean
+import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 
 /**
  * Service for logging login events.
- * Only enabled when JPA is available.
  */
 @Service
-@ConditionalOnBean(LoginAuditRepository::class)
+@ConditionalOnProperty(prefix = "session", name = ["enabled"], havingValue = "true")
 open class LoginAuditService(
+    @Autowired(required = true)
     private val loginAuditRepository: LoginAuditRepository
 ) {
     companion object {
