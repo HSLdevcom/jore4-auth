@@ -2,18 +2,17 @@ package fi.hsl.jore4.auth.audit
 
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
-import org.springframework.boot.autoconfigure.condition.ConditionalOnBean
+import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 
 /**
  * Service for logging login events.
- * Only enabled when JPA is available.
  */
 @Service
-@ConditionalOnBean(LoginAuditRepository::class)
 open class LoginAuditService(
-    private val loginAuditRepository: LoginAuditRepository
+    @Autowired(required = false)
+    private val loginAuditRepository: LoginAuditRepository?
 ) {
     companion object {
         private val LOGGER: Logger = LoggerFactory.getLogger(LoginAuditService::class.java)
@@ -27,6 +26,11 @@ open class LoginAuditService(
         userId: String,
         userName: String?
     ) {
+        if (loginAuditRepository == null) {
+            LOGGER.warn("LoginAuditRepository is not available, cannot record login")
+            return
+        }
+
         try {
             val auditRecord =
                 LoginAudit(
