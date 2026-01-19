@@ -20,13 +20,13 @@ FROM eclipse-temurin:25.0.1_8-jre
 EXPOSE 8080
 
 # download script for reading docker secrets
-ADD https://raw.githubusercontent.com/HSLdevcom/jore4-tools/main/docker/read-secrets.sh /app/scripts/read-secrets.sh
+ADD --chmod=755 https://raw.githubusercontent.com/HSLdevcom/jore4-tools/main/docker/read-secrets.sh /app/scripts/read-secrets.sh
 
 # copy over compiled jar
 COPY --from=builder /build/target/*.jar /usr/src/jore4-auth/auth-backend.jar
 
 # read docker secrets into environment variables and run application
-CMD /bin/bash -c "source /app/scripts/read-secrets.sh && java -jar /usr/src/jore4-auth/auth-backend.jar"
+CMD ["/bin/bash", "-c", "source /app/scripts/read-secrets.sh && java -jar /usr/src/jore4-auth/auth-backend.jar"]
 
 HEALTHCHECK --interval=1m --timeout=5s \
   CMD curl --fail http://localhost:8080/actuator/health
