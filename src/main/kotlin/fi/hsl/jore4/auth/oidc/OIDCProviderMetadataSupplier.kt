@@ -20,7 +20,7 @@ open class OIDCProviderMetadataSupplier(
         private val LOGGER: Logger = LoggerFactory.getLogger(OIDCProviderMetadataSupplier::class.java)
     }
 
-    lateinit var providerMetadata: OIDCProviderMetadata
+    final lateinit var providerMetadata: OIDCProviderMetadata
         private set
 
     /**
