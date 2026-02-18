@@ -26,7 +26,7 @@ EXPOSE 8080
 ADD --chmod=555 https://raw.githubusercontent.com/HSLdevcom/jore4-tools/main/docker/read-secrets.sh /app/scripts/read-secrets.sh
 
 # Downaload a Java applet to perform HEALTHCHECK with
-ADD --chmod=444 https://raw.githubusercontent.com/HSLdevcom/jore4-tools/main/docker/HealhtCheck.jar /app/scripts/HealhtCheck.jar
+ADD --chmod=444 https://raw.githubusercontent.com/HSLdevcom/jore4-tools/main/docker/HealthCheck.jar /app/scripts/HealthCheck.jar
 
 # Connection string is provided as env in Kubernetes by secrets manager
 # it should not be provided for other environments (local etc)
@@ -40,4 +40,4 @@ COPY --from=builder /build/target/*.jar /usr/src/jore4-auth/auth-backend.jar
 CMD ["/bin/bash", "-c", "source /app/scripts/read-secrets.sh && java -javaagent:/usr/src/jore4-auth/applicationinsights-agent.jar -jar /usr/src/jore4-auth/auth-backend.jar"]
 
 HEALTHCHECK --interval=1m --timeout=5s \
-  CMD ["java", "-jar", "/app/scripts/HealhtCheck.jar"]
+  CMD ["java", "-jar", "/app/scripts/HealthCheck.jar"]
