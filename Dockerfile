@@ -22,13 +22,16 @@ ARG APPINSIGHTS_VERSION=3.7.7
 # expose server port
 EXPOSE 8080
 
-# download script for reading docker secrets
-ADD --chmod=755 https://raw.githubusercontent.com/HSLdevcom/jore4-tools/main/docker/read-secrets.sh /app/scripts/read-secrets.sh
+# Download script for reading docker secrets
+ADD --chmod=555 https://raw.githubusercontent.com/HSLdevcom/jore4-tools/main/docker/read-secrets.sh /app/scripts/read-secrets.sh
+
+# Downaload a Java applet to perform HEALTHCHECK with
+ADD --chmod=444 https://raw.githubusercontent.com/HSLdevcom/jore4-tools/main/docker/HealhtCheck.jar /app/scripts/HealhtCheck.jar
 
 # Connection string is provided as env in Kubernetes by secrets manager
 # it should not be provided for other environments (local etc)
-ADD --chmod=755 https://github.com/microsoft/ApplicationInsights-Java/releases/download/${APPINSIGHTS_VERSION}/applicationinsights-agent-${APPINSIGHTS_VERSION}.jar /usr/src/jore4-auth/applicationinsights-agent.jar
-COPY --chmod=755 ./applicationinsights.json /usr/src/jore4-auth/applicationinsights.json
+ADD --chmod=444 https://github.com/microsoft/ApplicationInsights-Java/releases/download/${APPINSIGHTS_VERSION}/applicationinsights-agent-${APPINSIGHTS_VERSION}.jar /usr/src/jore4-auth/applicationinsights-agent.jar
+COPY --chmod=444 ./applicationinsights.json /usr/src/jore4-auth/applicationinsights.json
 
 # copy over compiled jar
 COPY --from=builder /build/target/*.jar /usr/src/jore4-auth/auth-backend.jar
@@ -37,4 +40,4 @@ COPY --from=builder /build/target/*.jar /usr/src/jore4-auth/auth-backend.jar
 CMD ["/bin/bash", "-c", "source /app/scripts/read-secrets.sh && java -javaagent:/usr/src/jore4-auth/applicationinsights-agent.jar -jar /usr/src/jore4-auth/auth-backend.jar"]
 
 HEALTHCHECK --interval=1m --timeout=5s \
-  CMD curl --fail http://localhost:8080/actuator/health
+  CMD ["java", "-jar", "/app/scripts/HealhtCheck.jar"]
