@@ -31,7 +31,7 @@
 
         <!-- Library versions -->
         <versions.retrofit>3.0.0</versions.retrofit>
-        <versions.oauth2-oidc-sdk>11.33</versions.oauth2-oidc-sdk>
+        <versions.oauth2-oidc-sdk>11.34</versions.oauth2-oidc-sdk>
         <versions.jsonwebtoken>0.13.0</versions.jsonwebtoken>
         <versions.springdoc>3.0.2</versions.springdoc>
         <versions.wiremock>3.13.2</versions.wiremock>
