@@ -136,6 +136,9 @@ print_usage() {
   test
     Run tests locally.
 
+  run
+    Run the application locally.
+
   stop
     Stop Docker containers.
 
@@ -172,6 +175,10 @@ case $COMMAND in
 
   test)
     run_tests
+    ;;
+
+  run)
+    mvn spring-boot:run -Pdev
     ;;
 
   stop)
