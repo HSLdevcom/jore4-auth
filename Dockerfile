@@ -14,7 +14,7 @@ COPY ./profiles/prod /build/profiles/prod
 RUN mvn clean package spring-boot:repackage -Pprod
 
 # distributed docker image
-FROM eclipse-temurin:25.0.4_7-jre
+FROM eclipse-temurin:25.0.5_8-jre
 
 # Application Insights version
 ARG APPINSIGHTS_VERSION=3.7.7
