@@ -16,7 +16,7 @@
     </parent>
 
     <properties>
-        <java.version>17</java.version>
+        <java.version>25</java.version>
 
         <!-- 3.6.3 is the last version of maven 3 that has been released. Back in 2019 -->
         <maven-enforcer.plugin.mvn-min-version>3.6.3</maven-enforcer.plugin.mvn-min-version>
@@ -215,7 +215,7 @@
                                     <version>[${maven-enforcer.plugin.mvn-min-version},)</version>
                                 </requireMavenVersion>
                                 <requireJavaVersion>
-                                    <message>You are running an incompatible version of Java. JDK 17 is required</message>
+                                    <message>You are running an incompatible version of Java. JDK ${java.version} is required</message>
                                     <version>${java.version}</version>
                                 </requireJavaVersion>
                             </rules>
