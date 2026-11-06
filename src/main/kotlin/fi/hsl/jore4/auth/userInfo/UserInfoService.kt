@@ -10,6 +10,7 @@ import okhttp3.Request
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
+import java.io.IOException
 
 /**
  * Provides access to user info data.
@@ -44,15 +45,20 @@ open class UserInfoService(
         LOGGER.debug("Fetching user info...")
 
         val response =
-            httpClient
-                .newCall(
-                    Request
-                        .Builder()
-                        .addHeader("Accept", "application/json;charset=UTF-8")
-                        .get()
-                        .url(oidcProviderMetadataSupplier.providerMetadata.userInfoEndpointURI.toURL())
-                        .build()
-                ).execute()
+            try {
+                httpClient
+                    .newCall(
+                        Request
+                            .Builder()
+                            .addHeader("Accept", "application/json;charset=UTF-8")
+                            .get()
+                            .url(oidcProviderMetadataSupplier.providerMetadata.userInfoEndpointURI.toURL())
+                            .build()
+                    ).execute()
+            } catch (ex: IOException) {
+                LOGGER.warn("Failed to fetch user info from OIDC provider", ex)
+                throw ex
+            }
 
         // If the response was not successful, we'll assume the user was not authorized to make the call. Reasons
         // for the user not being authorized may be
@@ -63,6 +69,7 @@ open class UserInfoService(
         //
         // Note that this condition usually does not depict an error.
         if (!response.isSuccessful) {
+            LOGGER.warn("OIDC user-info request failed with status {}", response.code)
             response.close()
             throw UnauthorizedException("Could not retrieve user info")
         }
@@ -84,6 +91,7 @@ open class UserInfoService(
                     permissions = listOf("admin")
                 }
         } catch (ex: Exception) {
+            LOGGER.warn("Failed to parse OIDC user info response ({})", ex.javaClass.simpleName)
             response.close()
             // if any part of parsing or interpreting the user info claims goes wrong, respond with 401 Unauthorized
             throw UnauthorizedException("Could not parse user info")
