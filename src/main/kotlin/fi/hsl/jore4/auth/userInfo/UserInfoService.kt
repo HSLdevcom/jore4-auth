@@ -70,6 +70,7 @@ open class UserInfoService(
         // Note that this condition usually does not depict an error.
         if (!response.isSuccessful) {
             LOGGER.warn("OIDC user-info request failed with status {}", response.code)
+            LOGGER.info("Response body: {}", response.body?.string())
             response.close()
             throw UnauthorizedException("Could not retrieve user info")
         }
