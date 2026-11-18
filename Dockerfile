@@ -38,7 +38,8 @@ COPY --chmod=444 ./applicationinsights.json /usr/src/jore4-auth/applicationinsig
 COPY --from=builder /build/target/*.jar /usr/src/jore4-auth/auth-backend.jar
 
 # read docker secrets into environment variables and run application
-CMD ["/bin/bash", "-c", "source /app/scripts/read-secrets.sh && java -javaagent:/usr/src/jore4-auth/applicationinsights-agent.jar -jar /usr/src/jore4-auth/auth-backend.jar"]
+# remove -XX:-UseBASE64Intrinsics once java4shell has been fixed
+CMD ["/bin/bash", "-c", "source /app/scripts/read-secrets.sh && java -XX:-UseBASE64Intrinsics -javaagent:/usr/src/jore4-auth/applicationinsights-agent.jar -jar /usr/src/jore4-auth/auth-backend.jar"]
 
 HEALTHCHECK --interval=1m --timeout=5s \
   CMD ["java", "-jar", "/app/scripts/HealthCheck.jar"]
