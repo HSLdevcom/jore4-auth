@@ -11,7 +11,7 @@
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
-        <version>4.1.2</version>
+        <version>4.2.0</version>
         <relativePath/>
     </parent>
 
@@ -23,20 +23,20 @@
 
         <!-- Dependency versions -->
         <!-- Maven plugins -->
-        <versions.maven.openapi>7.27.0</versions.maven.openapi>
+        <versions.maven.openapi>7.28.0</versions.maven.openapi>
         <versions.maven.build-helper>3.8.0</versions.maven.build-helper>
         <versions.maven.enforcer>3.7.0</versions.maven.enforcer>
         <versions.maven.ktlint>3.7.1</versions.maven.ktlint>
-        <versions.maven.flyway>13.12.2</versions.maven.flyway>
+        <versions.maven.flyway>13.13.0</versions.maven.flyway>
 
         <!-- Library versions -->
         <versions.retrofit>3.0.0</versions.retrofit>
         <versions.oauth2-oidc-sdk>11.39</versions.oauth2-oidc-sdk>
         <versions.jsonwebtoken>0.13.0</versions.jsonwebtoken>
-        <versions.springdoc>3.2.0</versions.springdoc>
+        <versions.springdoc>3.2.1</versions.springdoc>
         <versions.wiremock>3.13.2</versions.wiremock>
-        <versions.mockito>5.24.0</versions.mockito>
-        <versions.postgresql>42.7.14</versions.postgresql>
+        <versions.mockito>5.25.0</versions.mockito>
+        <versions.postgresql>42.7.15</versions.postgresql>
 
         <kotlin.compiler.incremental>true</kotlin.compiler.incremental>
 
